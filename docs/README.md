@@ -1,5 +1,13 @@
 # Polaris Documentation
 
+## Ember Home adaptation
+
+- [Product specification](./product-spec.md)
+- [Development plan](./development-plan.md)
+- [Architecture](./architecture.md)
+- [Zeabur deployment](./zeabur-deployment.md)
+- [ADR 0001: PWA before native](./decisions/0001-pwa-before-native.md)
+
 This directory maps Polaris architecture, data boundaries, implementation plans,
 and verification commands.
 

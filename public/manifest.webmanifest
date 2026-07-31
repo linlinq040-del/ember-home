@@ -1,0 +1,31 @@
+{
+  "name": "Ember Home",
+  "short_name": "Ember Home",
+  "description": "琳琳和 Ember 的私人、local-first 生活应用。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffaf4",
+  "theme_color": "#3d332d",
+  "icons": [
+    {
+      "src": "/icons/ember-home-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/ember-home-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/ember-home-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -6,7 +6,8 @@ import { installGlobalClientErrorLogging } from './app/bootstrap/clientErrorLog'
 import { installRuntimeStoreLocalDataBackend } from './app/bootstrap/storeLocalDataBackendBootstrap';
 import { recordAppRuntimeLogEntry } from './infrastructure/appRuntimeLog';
 import { AppErrorBoundary } from './ui/AppErrorBoundary';
-import { AppShell } from './ui/AppShell';
+import { EmberHomeRoot } from './ember-home/EmberHomeRoot';
+import { registerEmberHomeServiceWorker } from './ember-home/registerEmberHomeServiceWorker';
 import './app/bootstrap/appLayoutSurfaceBootstrap';
 import './app/bootstrap/nativeShellBootstrap';
 import './styles/tokens.css';
@@ -30,8 +31,9 @@ recordAppRuntimeLogEntry({
 ReactDOM.createRoot(rootElement!).render(
   <React.StrictMode>
     <AppErrorBoundary>
-      <AppShell />
+      <EmberHomeRoot />
     </AppErrorBoundary>
   </React.StrictMode>
 );
 bootRescueSurface.watchReactRoot();
+registerEmberHomeServiceWorker();

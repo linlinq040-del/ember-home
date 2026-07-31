@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Ember Home</title>
+  <desc id="description">A warm ember flame on a dark rounded square.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4d3a31"/>
+      <stop offset="1" stop-color="#251f1c"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#fff3c4"/>
+      <stop offset="0.45" stop-color="#f4a55d"/>
+      <stop offset="1" stop-color="#c9542e"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="132" fill="url(#background)"/>
+  <path fill="url(#flame)" d="M274 82c16 72-35 93-6 145 17 30 52 36 72 8 17 83-17 190-98 190-73 0-123-54-123-126 0-83 61-119 78-184 32 27 36 68 24 101 39-28 60-73 53-134Z"/>
+  <path fill="#fff8e7" fill-opacity=".82" d="M250 257c38 42 30 96-5 119-29-8-48-34-48-66 0-35 23-58 45-81-1 13 2 22 8 28Z"/>
+</svg>

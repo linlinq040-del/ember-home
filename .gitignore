@@ -39,6 +39,8 @@ private-*/
 *-private/
 
 # Codex work artifacts
+.tools/
+.npm-cache/
 tmp/
 tmp/claude-*
 tmp/polaris-*

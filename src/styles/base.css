@@ -1,4 +1,5 @@
 @import './foundation.css';
+@import './ember-home.css';
 @import './help-hint.css';
 @import './app-error-boundary.css';
 @import './shell.css';
