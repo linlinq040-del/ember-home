@@ -1,10 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchOpenMeteoWeather, searchOpenMeteoCities, weatherCodeLabel } from './weatherProvider';
+import { fetchOpenMeteoWeather, searchOpenMeteoCities, weatherCodeLabel, weatherVisualKind } from './weatherProvider';
 
 describe('weatherProvider', () => {
   it('maps an Open-Meteo forecast into the small living-room snapshot', async () => {
     const fetcher = vi.fn(async (_input: RequestInfo | URL) => new Response(JSON.stringify({
-      current: { temperature_2m: 18.4, weather_code: 2 },
+      current: { temperature_2m: 18.4, weather_code: 2, is_day: 1 },
+      hourly: {
+        time: ['2026-08-01T15:00', '2026-08-01T21:00'],
+        temperature_2m: [20.6, 15.8],
+        weather_code: [1, 61]
+      },
       daily: {
         temperature_2m_max: [21.2],
         temperature_2m_min: [13.7],
@@ -26,8 +31,13 @@ describe('weatherProvider', () => {
       currentTemperature: 18,
       highTemperature: 21,
       lowTemperature: 14,
+      afternoonTemperature: 21,
+      eveningTemperature: 16,
       precipitationProbability: 16,
       weatherCode: 2,
+      afternoonWeatherCode: 1,
+      eveningWeatherCode: 61,
+      isDay: true,
       condition: '多云',
       fetchedAt: 123
     });
@@ -46,5 +56,14 @@ describe('weatherProvider', () => {
 
   it('uses a friendly fallback for unknown weather codes', () => {
     expect(weatherCodeLabel(500)).toBe('天气变化中');
+  });
+
+  it('maps weather codes and night state to visual families', () => {
+    expect(weatherVisualKind(0, true)).toBe('clear');
+    expect(weatherVisualKind(1, false)).toBe('night');
+    expect(weatherVisualKind(45, true)).toBe('fog');
+    expect(weatherVisualKind(61, true)).toBe('rain');
+    expect(weatherVisualKind(73, true)).toBe('snow');
+    expect(weatherVisualKind(95, true)).toBe('storm');
   });
 });

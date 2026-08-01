@@ -3,11 +3,18 @@ export type WeatherSnapshot = {
   currentTemperature: number;
   highTemperature: number;
   lowTemperature: number;
+  afternoonTemperature: number;
+  eveningTemperature: number;
   precipitationProbability: number;
   weatherCode: number;
+  afternoonWeatherCode: number;
+  eveningWeatherCode: number;
+  isDay: boolean;
   condition: string;
   fetchedAt: number;
 };
+
+export type WeatherVisualKind = 'clear' | 'partly-cloudy' | 'overcast' | 'rain' | 'storm' | 'snow' | 'fog' | 'night';
 
 export type WeatherCity = {
   id: number;
@@ -53,6 +60,18 @@ export function weatherCodeLabel(code: number) {
   return WEATHER_CODE_LABELS[code] ?? '天气变化中';
 }
 
+export function weatherVisualKind(code: number, isDay = true): WeatherVisualKind {
+  if (!isDay && code <= 2) return 'night';
+  if (code === 0) return 'clear';
+  if (code === 1 || code === 2) return 'partly-cloudy';
+  if (code === 3) return 'overcast';
+  if (code === 45 || code === 48) return 'fog';
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'snow';
+  if (code >= 95) return 'storm';
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return 'rain';
+  return 'partly-cloudy';
+}
+
 function assertCoordinate(value: number, min: number, max: number, label: string) {
   if (!Number.isFinite(value) || value < min || value > max) {
     throw new Error(`${label}无效。`);
@@ -78,7 +97,8 @@ export async function fetchOpenMeteoWeather(args: {
   const url = new URL('https://api.open-meteo.com/v1/forecast');
   url.searchParams.set('latitude', String(args.latitude));
   url.searchParams.set('longitude', String(args.longitude));
-  url.searchParams.set('current', 'temperature_2m,weather_code');
+  url.searchParams.set('current', 'temperature_2m,weather_code,is_day');
+  url.searchParams.set('hourly', 'temperature_2m,weather_code');
   url.searchParams.set('daily', 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max');
   url.searchParams.set('timezone', 'auto');
   url.searchParams.set('forecast_days', '1');
@@ -86,7 +106,12 @@ export async function fetchOpenMeteoWeather(args: {
   const response = await fetcher(url);
   if (!response.ok) throw new Error(`天气服务暂时不可用（${response.status}）。`);
   const payload = await response.json() as {
-    current?: { temperature_2m?: number; weather_code?: number };
+    current?: { temperature_2m?: number; weather_code?: number; is_day?: number };
+    hourly?: {
+      time?: string[];
+      temperature_2m?: number[];
+      weather_code?: number[];
+    };
     daily?: {
       temperature_2m_max?: number[];
       temperature_2m_min?: number[];
@@ -97,13 +122,27 @@ export async function fetchOpenMeteoWeather(args: {
   const weatherCode = Number(payload.current?.weather_code ?? payload.daily?.weather_code?.[0]);
   if (!Number.isFinite(weatherCode)) throw new Error('天气服务没有返回当前天气。');
 
+  const hourlyValue = (hour: number, values: number[] | undefined, fallback: number) => {
+    const suffix = `T${String(hour).padStart(2, '0')}:00`;
+    const index = (payload.hourly?.time ?? []).findIndex((time) => time.endsWith(suffix));
+    const value = Number(index >= 0 ? values?.[index] : fallback);
+    return Number.isFinite(value) ? value : fallback;
+  };
+  const afternoonWeatherCode = hourlyValue(15, payload.hourly?.weather_code, weatherCode);
+  const eveningWeatherCode = hourlyValue(21, payload.hourly?.weather_code, weatherCode);
+
   return {
     locationLabel: args.locationLabel.trim() || '当前位置',
     currentTemperature: rounded(payload.current?.temperature_2m),
     highTemperature: rounded(payload.daily?.temperature_2m_max?.[0]),
     lowTemperature: rounded(payload.daily?.temperature_2m_min?.[0]),
+    afternoonTemperature: rounded(hourlyValue(15, payload.hourly?.temperature_2m, payload.daily?.temperature_2m_max?.[0] ?? 0)),
+    eveningTemperature: rounded(hourlyValue(21, payload.hourly?.temperature_2m, payload.daily?.temperature_2m_min?.[0] ?? 0)),
     precipitationProbability: Math.max(0, Math.min(100, rounded(payload.daily?.precipitation_probability_max?.[0] ?? 0))),
     weatherCode,
+    afternoonWeatherCode,
+    eveningWeatherCode,
+    isDay: payload.current?.is_day !== 0,
     condition: weatherCodeLabel(weatherCode),
     fetchedAt: args.now ?? Date.now()
   };

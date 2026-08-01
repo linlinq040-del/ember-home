@@ -3,8 +3,10 @@ import {
   fetchOpenMeteoWeather,
   requestBrowserCoordinates,
   searchOpenMeteoCities,
+  weatherVisualKind,
   type WeatherCity,
-  type WeatherSnapshot
+  type WeatherSnapshot,
+  type WeatherVisualKind
 } from './weatherProvider';
 
 const WEATHER_CACHE_KEY = 'ember-home.weather-cache.v1';
@@ -43,6 +45,21 @@ function rainCopy(probability: number) {
   if (probability >= 70) return `降雨概率 ${probability}%，记得带伞`;
   if (probability >= 40) return `可能下雨 · ${probability}%`;
   return `降雨概率 ${probability}%`;
+}
+
+const WEATHER_BACKGROUNDS: Record<WeatherVisualKind, string> = {
+  clear: '/assets/weather/clear-day.png',
+  'partly-cloudy': '/assets/weather/partly-cloudy.png',
+  overcast: '/assets/weather/overcast-day.png',
+  rain: '/assets/weather/rain-day.png',
+  storm: '/assets/weather/storm-day.png',
+  snow: '/assets/weather/snow-day.png',
+  fog: '/assets/weather/fog-day.png',
+  night: '/assets/weather/clear-night.png'
+};
+
+function WeatherIcon({ kind }: { kind: WeatherVisualKind }) {
+  return <i className="ember-preview-weather-icon" data-kind={kind} aria-hidden="true" />;
 }
 
 export function WeatherCard() {
@@ -124,10 +141,14 @@ export function WeatherCard() {
   }
 
   const displayLocation = snapshot?.locationLabel.split(' · ')[0] ?? '选择城市';
+  const currentKind = weatherVisualKind(snapshot?.weatherCode ?? 2, snapshot?.isDay ?? true);
+  const afternoonKind = weatherVisualKind(snapshot?.afternoonWeatherCode ?? snapshot?.weatherCode ?? 2, true);
+  const eveningKind = weatherVisualKind(snapshot?.eveningWeatherCode ?? snapshot?.weatherCode ?? 2, false);
+  const backgroundAsset = WEATHER_BACKGROUNDS[currentKind];
 
   return (
     <article className="ember-preview-weather-card">
-      <img src="/assets/weather-board-dynamic.png" alt="柔和云层与阳光天气卡片" />
+      <img src={backgroundAsset} alt={`${snapshot?.condition ?? '多云'}天气场景`} />
       <button className="ember-preview-weather-live" type="button" onClick={() => setPanelOpen((open) => !open)} aria-label="设置天气" aria-live="polite">
         <span className="ember-preview-weather-location">{loading ? '正在更新' : displayLocation}</span>
         <strong>{snapshot ? `${snapshot.currentTemperature}°` : '--°'}</strong>
@@ -135,9 +156,9 @@ export function WeatherCard() {
         <small>{snapshot ? `最高 ${snapshot.highTemperature}° · 最低 ${snapshot.lowTemperature}°` : '点击这里接入天气'}</small>
       </button>
       <div className="ember-preview-weather-forecast" aria-label="今日分时天气">
-        <span><small>现在</small><b>{snapshot ? `${snapshot.currentTemperature}°` : '--°'}</b></span>
-        <span><small>下午</small><b>{snapshot ? `${snapshot.highTemperature}°` : '--°'}</b></span>
-        <span><small>今晚</small><b>{snapshot ? `${snapshot.lowTemperature}°` : '--°'}</b></span>
+        <span><small>现在</small><WeatherIcon kind={currentKind} /><b>{snapshot ? `${snapshot.currentTemperature}°` : '--°'}</b></span>
+        <span><small>下午</small><WeatherIcon kind={afternoonKind} /><b>{snapshot ? `${snapshot.afternoonTemperature ?? snapshot.highTemperature}°` : '--°'}</b></span>
+        <span><small>今晚</small><WeatherIcon kind={eveningKind} /><b>{snapshot ? `${snapshot.eveningTemperature ?? snapshot.lowTemperature}°` : '--°'}</b></span>
       </div>
       <span className="ember-preview-weather-rain">{snapshot ? rainCopy(snapshot.precipitationProbability) : '点击左上方接入真实天气'}</span>
       <span className="ember-preview-weather-note" aria-hidden="true">风有一点凉，<br />回来时我在家等你。♡</span>
