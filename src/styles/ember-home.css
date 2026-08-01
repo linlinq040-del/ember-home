@@ -208,8 +208,46 @@ html.ember-living-room-active #root {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 62%, rgba(255, 252, 248, 0.82));
+  background: linear-gradient(180deg, transparent 50%, rgba(255, 252, 248, 0.96));
   pointer-events: none;
+}
+
+.ember-preview-weather-live {
+  width: min(54%, 275px);
+  min-height: 100%;
+  padding: 25px 22px 54px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #554955;
+  background: linear-gradient(90deg, #faf6f4 0%, #faf6f4 72%, rgba(250, 246, 244, 0.92) 86%, transparent 100%);
+}
+
+.ember-preview-weather-location {
+  max-width: 100%;
+  overflow: hidden;
+  color: #8b7480;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ember-preview-weather-live strong {
+  margin: 4px 0 0;
+  font: 400 55px/1 Georgia, "Songti SC", serif;
+}
+
+.ember-preview-weather-live b {
+  margin-top: 7px;
+  font-size: 15px;
+}
+
+.ember-preview-weather-live small {
+  margin-top: 4px;
+  color: #766c72;
+  font-size: 10px;
 }
 
 .ember-preview-weather-sync {
@@ -223,6 +261,7 @@ html.ember-living-room-active #root {
   background: rgba(255, 255, 255, 0.64);
   backdrop-filter: blur(12px);
   font-size: 9px;
+  border: 0;
 }
 
 .ember-preview-weather-sync i {
@@ -232,6 +271,90 @@ html.ember-living-room-active #root {
   display: inline-block;
   border-radius: 50%;
   background: #b19a8b;
+}
+
+.ember-preview-weather-panel {
+  padding: 13px;
+  position: absolute;
+  z-index: 5;
+  inset: 12px;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  color: #51464f;
+  background: rgba(252, 248, 246, 0.96);
+  box-shadow: 0 16px 34px rgba(65, 49, 61, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.ember-preview-weather-panel-actions,
+.ember-preview-weather-panel form {
+  display: flex;
+  gap: 7px;
+}
+
+.ember-preview-weather-panel-actions {
+  flex-wrap: wrap;
+}
+
+.ember-preview-weather-privacy {
+  margin: 8px 2px 0;
+  display: block;
+  color: #847782;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.ember-preview-weather-privacy a {
+  color: #786075;
+  text-decoration: underline;
+}
+
+.ember-preview-weather-panel button,
+.ember-preview-weather-panel input,
+.ember-preview-weather-restore {
+  min-height: 34px;
+  border: 1px solid rgba(121, 94, 113, 0.14);
+  border-radius: 12px;
+  color: #675766;
+  background: rgba(255, 255, 255, 0.8);
+  font: inherit;
+}
+
+.ember-preview-weather-panel button {
+  padding: 0 11px;
+}
+
+.ember-preview-weather-panel form {
+  margin-top: 10px;
+}
+
+.ember-preview-weather-panel input {
+  min-width: 0;
+  flex: 1;
+  padding: 0 11px;
+}
+
+.ember-preview-weather-panel p {
+  margin: 8px 2px 0;
+  color: #a15f68;
+  font-size: 10px;
+}
+
+.ember-preview-weather-city-list {
+  margin-top: 8px;
+  display: grid;
+  gap: 5px;
+}
+
+.ember-preview-weather-city-list button {
+  text-align: left;
+}
+
+.ember-preview-weather-restore {
+  padding: 0 18px;
+  justify-self: start;
+  align-self: end;
 }
 
 .ember-preview-together-card {

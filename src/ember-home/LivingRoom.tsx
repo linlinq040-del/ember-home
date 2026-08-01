@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EmberMigrationPreviewPanel } from './EmberMigrationPreviewPanel';
 import { getLivingRoomGreeting } from './livingRoomGreeting';
+import { WeatherCard } from './WeatherCard';
 
 type LivingRoomProps = {
   onOpenChat: () => void;
@@ -111,10 +112,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
           {page === 'home' ? (
             <div className="ember-preview-home-page">
               <section className="ember-preview-hero-grid">
-                <button className="ember-preview-weather-card" type="button" onClick={() => showComingSoon('天气服务')}>
-                  <img src="/assets/weather-board-clean.png" alt="18度，多云转晴的今日天气卡片" />
-                  <span className="ember-preview-weather-sync"><i /> 天气服务 · 等待接入</span>
-                </button>
+                <WeatherCard />
 
                 <article className="ember-preview-together-card">
                   <span className="ember-preview-eyebrow">OUR DAYS</span>
