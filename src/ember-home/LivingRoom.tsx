@@ -32,6 +32,25 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
   const greeting = getLivingRoomGreeting(new Date().getHours());
 
   useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+    const themeColorMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    const previousThemeColor = themeColorMeta?.getAttribute('content') ?? null;
+
+    root.classList.add('ember-living-room-active');
+    body.classList.add('ember-living-room-active');
+    themeColorMeta?.setAttribute('content', '#faf7f5');
+
+    return () => {
+      root.classList.remove('ember-living-room-active');
+      body.classList.remove('ember-living-room-active');
+      if (themeColorMeta && previousThemeColor !== null) {
+        themeColorMeta.setAttribute('content', previousThemeColor);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!toast) return;
     const timer = window.setTimeout(() => setToast(''), 2300);
     return () => window.clearTimeout(timer);

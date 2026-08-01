@@ -20,6 +20,12 @@
   -webkit-overflow-scrolling: touch;
 }
 
+html.ember-living-room-active,
+body.ember-living-room-active,
+html.ember-living-room-active #root {
+  background: #faf7f5;
+}
+
 .ember-living-room,
 .ember-living-room * {
   box-sizing: border-box;
