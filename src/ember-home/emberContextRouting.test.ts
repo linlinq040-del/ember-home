@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createPersonaTemplate } from '../config/persona/personaBuilder';
 import {
+  resolveEmberChatEntryContext,
   resolveEmberIdentityRoute,
   resolveEmberMemoryRoute
 } from './emberContextRouting';
@@ -77,5 +78,38 @@ describe('resolveEmberMemoryRoute', () => {
       longTermMemoryRequested: true,
       ombreBrainAvailable: true
     }).ombreBrain).toBe('query');
+  });
+});
+
+describe('resolveEmberChatEntryContext', () => {
+  it('keeps an existing conversation collaborator and enables its chat memory', () => {
+    const personas = [createPersona('ember', 'Ember'), createPersona('existing', '测试')];
+
+    expect(resolveEmberChatEntryContext({
+      personas,
+      conversationCollaboratorId: 'existing',
+      activeCollaboratorId: 'ember'
+    })).toEqual({
+      identity: {
+        collaboratorId: 'existing',
+        displayName: 'Ember',
+        source: 'conversation'
+      },
+      memory: {
+        includeCurrentConversation: true,
+        includeCrossConversationRecall: true,
+        ombreBrain: 'skip'
+      }
+    });
+  });
+
+  it('selects an existing Ember persona without creating or renaming data', () => {
+    const personas = [createPersona('legacy', '旧角色'), createPersona('ember', 'EMBER', false)];
+    const before = JSON.stringify(personas);
+    const result = resolveEmberChatEntryContext({ personas, activeCollaboratorId: 'legacy' });
+
+    expect(result.identity).toMatchObject({ collaboratorId: 'ember', source: 'ember' });
+    expect(result.memory.includeCrossConversationRecall).toBe(false);
+    expect(JSON.stringify(personas)).toBe(before);
   });
 });

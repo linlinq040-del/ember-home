@@ -35,6 +35,16 @@ export interface EmberMemoryRoute {
   ombreBrain: 'skip' | 'query';
 }
 
+export interface ResolveEmberChatEntryContextInput extends ResolveEmberIdentityRouteInput {
+  longTermMemoryRequested?: boolean;
+  ombreBrainAvailable?: boolean;
+}
+
+export interface EmberChatEntryContext {
+  identity: EmberIdentityRoute;
+  memory: EmberMemoryRoute;
+}
+
 function findPersonaById(personas: readonly Persona[], id?: string | null) {
   if (!id) return null;
   return personas.find((persona) => persona.id === id) ?? null;
@@ -110,5 +120,35 @@ export function resolveEmberMemoryRoute({
     includeCrossConversationRecall:
       isChat && Boolean(persona?.memory.crossConversationRecallEnabled),
     ombreBrain: longTermMemoryRequested && ombreBrainAvailable ? 'query' : 'skip'
+  };
+}
+
+/**
+ * Resolves the identity and memory policy used when the living room opens the
+ * existing chat. This only selects existing local records; it never creates,
+ * renames, or imports a collaborator or conversation.
+ */
+export function resolveEmberChatEntryContext({
+  personas,
+  conversationCollaboratorId,
+  activeCollaboratorId,
+  longTermMemoryRequested = false,
+  ombreBrainAvailable = false
+}: ResolveEmberChatEntryContextInput): EmberChatEntryContext {
+  const identity = resolveEmberIdentityRoute({
+    personas,
+    conversationCollaboratorId,
+    activeCollaboratorId
+  });
+  const persona = personas.find((candidate) => candidate.id === identity.collaboratorId) ?? null;
+
+  return {
+    identity,
+    memory: resolveEmberMemoryRoute({
+      scene: 'chat',
+      persona,
+      longTermMemoryRequested,
+      ombreBrainAvailable
+    })
   };
 }
