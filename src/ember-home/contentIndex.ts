@@ -1,6 +1,6 @@
 import type { CodeCard, Conversation, RoomProject } from '../types/domain';
 
-export type EmberContentKind = 'conversation' | 'room-card' | 'workspace';
+export type EmberContentKind = 'conversation' | 'room' | 'room-card' | 'workspace';
 
 export interface EmberContentIndexEntry {
   indexId: string;

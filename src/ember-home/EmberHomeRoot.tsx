@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePersistentStoreLifecycle } from '../app/bootstrap/usePersistentStoreLifecycle';
 import { resolveConversationCollaboratorId } from '../engines/conversationOwnership';
 import { reportPersistenceError } from '../infrastructure/persistenceDiagnostics';
@@ -18,15 +18,27 @@ import {
   type EmberHomeBinding
 } from './emberHomeBinding';
 import { LivingRoom } from './LivingRoom';
+import type { EmberPreviewRoomId } from './EmberRoomPreview';
+import {
+  resolveEmberRoomIntent,
+  validateEmberRoomTarget
+} from './emberRoomNavigation';
+import type { EmberContentIndexEntry } from './contentIndex';
 
 type EmberHomeSurface = 'living-room' | 'chat';
 
 export function EmberHomeRoot() {
   const [surface, setSurface] = useState<EmberHomeSurface>('living-room');
+  const [livingRoomPage, setLivingRoomPage] = useState<'home' | EmberPreviewRoomId>('home');
   const [homeBinding, setHomeBinding] = useState<EmberHomeBinding | null>(null);
   const [bindingReady, setBindingReady] = useState(false);
   const [pendingChatOpen, setPendingChatOpen] = useState(false);
   const persistentStoreLifecycle = usePersistentStoreLifecycle();
+  const pendingRoomNavigationRef = useRef<{
+    conversationId: string;
+    userMessageId: string;
+    entry: EmberContentIndexEntry;
+  } | null>(null);
 
   useEffect(() => {
     if (!persistentStoreLifecycle.startupStoresReady) return;
@@ -123,14 +135,86 @@ export function EmberHomeRoot() {
     void enterChat();
   }, [bindingReady, enterChat, pendingChatOpen, persistentStoreLifecycle.startupStoresReady]);
 
+  useEffect(() => {
+    if (surface !== 'chat') {
+      pendingRoomNavigationRef.current = null;
+      return;
+    }
+
+    const initialState = useChatStore.getState();
+    const seenUserMessageIds = new Set(
+      initialState.conversations.flatMap((conversation) => conversation.messages)
+        .filter((message) => message.role === 'user' && !message.toolInvocation)
+        .map((message) => message.id)
+    );
+
+    const unsubscribe = useChatStore.subscribe((state) => {
+      const conversation = state.conversations.find(
+        (candidate) => candidate.id === state.activeConversationId
+      );
+      if (!conversation) return;
+      const unseen = conversation.messages.filter((message) => (
+        message.role === 'user'
+        && !message.toolInvocation
+        && !seenUserMessageIds.has(message.id)
+      ));
+      for (const message of unseen) seenUserMessageIds.add(message.id);
+      const latestUserMessage = unseen[unseen.length - 1];
+      if (!latestUserMessage) return;
+
+      const entry = resolveEmberRoomIntent(latestUserMessage.content);
+      pendingRoomNavigationRef.current = entry ? {
+        conversationId: conversation.id,
+        userMessageId: latestUserMessage.id,
+        entry
+      } : null;
+    });
+
+    const handleAssistantPresented = (event: Event) => {
+      const pending = pendingRoomNavigationRef.current;
+      if (!pending) return;
+      const messageId = (event as CustomEvent<{ messageId?: string }>).detail?.messageId;
+      if (!messageId) return;
+
+      const state = useChatStore.getState();
+      const conversation = state.conversations.find((candidate) => candidate.id === pending.conversationId);
+      if (!conversation || state.activeConversationId !== pending.conversationId) return;
+      const userIndex = conversation.messages.findIndex((message) => message.id === pending.userMessageId);
+      const assistantIndex = conversation.messages.findIndex((message) => message.id === messageId);
+      if (userIndex < 0 || assistantIndex <= userIndex) return;
+      const superseded = conversation.messages.slice(userIndex + 1, assistantIndex + 1)
+        .some((message) => message.role === 'user' && !message.toolInvocation);
+      if (superseded) {
+        pendingRoomNavigationRef.current = null;
+        return;
+      }
+
+      const target = validateEmberRoomTarget(pending.entry);
+      pendingRoomNavigationRef.current = null;
+      if (!target) return;
+      setLivingRoomPage(target);
+      setSurface('living-room');
+    };
+
+    window.addEventListener('ember-home:assistant-presented', handleAssistantPresented);
+    return () => {
+      unsubscribe();
+      window.removeEventListener('ember-home:assistant-presented', handleAssistantPresented);
+    };
+  }, [surface]);
+
   if (surface === 'living-room') {
-    return <LivingRoom onOpenChat={openChat} />;
+    return <LivingRoom initialPage={livingRoomPage} onOpenChat={openChat} />;
   }
 
   return (
     <div className="ember-chat-host">
       <AppShell
-        onReturnHome={() => setSurface('living-room')}
+        onReturnHome={() => {
+          pendingRoomNavigationRef.current = null;
+          setLivingRoomPage('home');
+          setSurface('living-room');
+        }}
         persistentStoreLifecycle={persistentStoreLifecycle}
       />
     </div>

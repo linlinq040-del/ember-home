@@ -6,6 +6,7 @@ import { WeatherCard } from './WeatherCard';
 
 type LivingRoomProps = {
   onOpenChat: () => void;
+  initialPage?: LivingRoomPage;
 };
 
 type LivingRoomPage = 'home' | 'rooms' | 'migration' | EmberPreviewRoomId;
@@ -27,8 +28,8 @@ const rooms = [
   { id: 'studio', number: '06', title: '创作工作室', note: '正在布置', image: '/assets/room-studio-watercolor.png', preview: false }
 ] as const;
 
-export function LivingRoom({ onOpenChat }: LivingRoomProps) {
-  const [page, setPage] = useState<LivingRoomPage>('home');
+export function LivingRoom({ onOpenChat, initialPage = 'home' }: LivingRoomProps) {
+  const [page, setPage] = useState<LivingRoomPage>(initialPage);
   const [toast, setToast] = useState('');
   const [petMood, setPetMood] = useState('今天心情很好');
   const [petHearts, setPetHearts] = useState(0);

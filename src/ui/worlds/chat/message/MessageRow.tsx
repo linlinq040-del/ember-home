@@ -338,6 +338,22 @@ function MessageRowComponent({
   const useSentenceConversationLayout = canUseSentenceBubbles
     && (showSentenceTyping || sentenceBubbleContents.length > 1);
   const messageTimestamp = formatMessageTimestamp(message.timestamp);
+  const assistantPresentationReportedRef = useRef(false);
+  useEffect(() => {
+    if (
+      assistantPresentationReportedRef.current
+      || !isAssistantReply
+      || !isTerminalAssistantInUserTurn
+      || message.requestRole === 'system'
+      || isStreamingLike
+      || showSentenceTyping
+      || !message.content.trim()
+    ) return;
+    assistantPresentationReportedRef.current = true;
+    window.dispatchEvent(new CustomEvent('ember-home:assistant-presented', {
+      detail: { messageId: message.id }
+    }));
+  }, [isAssistantReply, isStreamingLike, isTerminalAssistantInUserTurn, message.content, message.id, message.requestRole, showSentenceTyping]);
   const messageBubble = (
     <div
       ref={bubbleFrameRef}
