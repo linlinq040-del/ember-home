@@ -188,6 +188,8 @@ html.ember-living-room-active #root {
 }
 
 .ember-preview-weather-card {
+  width: 100%;
+  min-width: 0;
   aspect-ratio: 1300 / 725;
   min-height: 246px;
   padding: 0;
@@ -931,7 +933,7 @@ html.ember-living-room-active #root {
   }
   .ember-preview-hero-grid,
   .ember-preview-lower-grid { grid-template-columns: 1fr; }
-  .ember-preview-weather-card { min-height: 215px; }
+  .ember-preview-weather-card { min-height: 0; }
   .ember-preview-together-card { padding: 23px; }
   .ember-preview-together-card > strong { margin: 20px 0 17px; }
   .ember-preview-note { padding: 18px; gap: 16px; }
@@ -989,7 +991,7 @@ html.ember-living-room-active #root {
 @media (max-width: 390px) {
   .ember-preview-pet-stage { flex-direction: column; gap: 1px; padding: 16px; }
   .ember-preview-pet-copy { text-align: center; }
-  .ember-preview-weather-card { min-height: 195px; }
+  .ember-preview-weather-card { min-height: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
