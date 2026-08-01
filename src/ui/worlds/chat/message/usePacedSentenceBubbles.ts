@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export const MIN_SENTENCE_BUBBLE_INTERVAL_MS = 560;
+export const MIN_SENTENCE_BUBBLE_INTERVAL_MS = 1100;
 
 export function sentenceBubbleRevealDelay(visibleCount: number, elapsedMs: number) {
   if (visibleCount === 0) return 0;

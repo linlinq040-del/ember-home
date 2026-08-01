@@ -111,11 +111,11 @@
 .message-time-corner {
   display: block;
   align-self: flex-end;
-  margin: 5px 0 -2px 12px;
-  color: color-mix(in srgb, currentColor 58%, transparent);
-  font-size: 9px;
+  margin: 4px 0 -2px 10px;
+  color: color-mix(in srgb, currentColor 46%, transparent);
+  font-size: 8px;
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
   text-align: right;
   white-space: nowrap;
