@@ -8,6 +8,7 @@ import {
   type WeatherSnapshot,
   type WeatherVisualKind
 } from './weatherProvider';
+import { weatherNote } from './weatherNote';
 
 const WEATHER_CACHE_KEY = 'ember-home.weather-cache.v1';
 const WEATHER_SETTINGS_KEY = 'ember-home.weather-settings.v1';
@@ -145,6 +146,7 @@ export function WeatherCard() {
   const afternoonKind = weatherVisualKind(snapshot?.afternoonWeatherCode ?? snapshot?.weatherCode ?? 2, true);
   const eveningKind = weatherVisualKind(snapshot?.eveningWeatherCode ?? snapshot?.weatherCode ?? 2, false);
   const backgroundAsset = WEATHER_BACKGROUNDS[currentKind];
+  const note = weatherNote(snapshot);
 
   return (
     <article className="ember-preview-weather-card">
@@ -161,7 +163,7 @@ export function WeatherCard() {
         <span><small>今晚</small><WeatherIcon kind={eveningKind} /><b>{snapshot ? `${snapshot.eveningTemperature ?? snapshot.lowTemperature}°` : '--°'}</b></span>
       </div>
       <span className="ember-preview-weather-rain">{snapshot ? rainCopy(snapshot.precipitationProbability) : '点击左上方接入真实天气'}</span>
-      <span className="ember-preview-weather-note" aria-hidden="true">风有一点凉，<br />回来时我在家等你。♡</span>
+      <span className="ember-preview-weather-note" aria-live="polite">{note[0]}<br />{note[1]}</span>
 
       {panelOpen ? (
         <div className="ember-preview-weather-panel">
