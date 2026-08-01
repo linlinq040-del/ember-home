@@ -113,13 +113,8 @@ html.ember-living-room-active #root {
   font-size: 34px;
 }
 
-.ember-preview-settings {
-  margin-left: auto;
-  color: #786978;
-  font-size: 17px;
-}
-
 .ember-preview-avatar {
+  margin-left: auto;
   position: relative;
   overflow: visible;
   border: 1px solid rgba(94, 72, 82, 0.1);
@@ -556,6 +551,46 @@ html.ember-living-room-active #root {
   color: rgba(72, 61, 70, 0.64);
   font-size: clamp(9px, 1.4vw, 13px);
 }
+
+.ember-preview-settings-entry {
+  width: 100%;
+  min-height: 76px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 24px;
+  color: #584b56;
+  background: rgba(255, 253, 250, 0.88);
+  box-shadow: 0 12px 30px rgba(74, 57, 68, 0.07);
+  text-align: left;
+}
+
+.ember-preview-settings-entry-icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #786978;
+  background: #f1e9e6;
+  font-size: 21px;
+}
+
+.ember-preview-settings-entry-copy {
+  min-width: 0;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ember-preview-settings-entry-copy strong { font-size: 14px; }
+.ember-preview-settings-entry-copy small { color: var(--ember-preview-muted); font-size: 10px; }
+.ember-preview-settings-entry > b { color: #988a94; font-size: 25px; font-weight: 400; }
 
 .ember-preview-bottom-nav {
   width: min(570px, calc(100% - 30px));

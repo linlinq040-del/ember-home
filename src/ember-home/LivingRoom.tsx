@@ -104,7 +104,6 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
               <strong>家里的房间</strong>
             )}
           </div>
-          <button className="ember-preview-icon-button ember-preview-settings" type="button" onClick={() => showComingSoon('Ember Home 系统设置')} aria-label="打开 Ember Home 系统设置">⚙</button>
           <button className="ember-preview-avatar" type="button" onClick={() => setToast('头像设置会继续保存在本机')} aria-label="自定义头像"><span>兔</span><i>＋</i></button>
         </header>
 
@@ -188,6 +187,19 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
                   </button>
                 ))}
               </div>
+              <button
+                className="ember-preview-settings-entry"
+                type="button"
+                onClick={() => showComingSoon('Ember Home 系统设置')}
+                aria-label="打开 Ember Home 系统设置"
+              >
+                <span className="ember-preview-settings-entry-icon" aria-hidden="true">⚙</span>
+                <span className="ember-preview-settings-entry-copy">
+                  <strong>Ember Home 设置</strong>
+                  <small>外观、数据与设备设置</small>
+                </span>
+                <b aria-hidden="true">›</b>
+              </button>
             </div>
           )}
         </div>
