@@ -5,6 +5,12 @@ belong in feature specifications and architecture decision records.
 
 ## Current phase: PWA foundation
 
+Current handoff and the next construction checklist are tracked in
+[`next-work.md`](./next-work.md). The 2026-08-02 checkpoint has a working living
+room, complete inherited chat, temporary Ember binding, unified product guide
+and memory path, sentence bubbles, validated room navigation, and study/theater
+navigation previews. Music and the first real study slice remain unfinished.
+
 1. Audit and run the inherited Polaris project on Windows.
 2. Establish the Ember Home branch, repository rules, and living-room shell.
 3. Deploy an installable HTTPS PWA and verify iPhone/iPad home-screen behavior.
