@@ -232,7 +232,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
               {item.id === 'chat' ? (
                 <span className="ember-preview-chat-circle" aria-hidden="true"><i className="back-bubble" /><i className="front-bubble"><b /><b /></i></span>
               ) : <span>{item.icon}</span>}
-              <small>{item.label}</small>
+              {item.id === 'chat' ? null : <small>{item.label}</small>}
             </button>
           );
         })}
