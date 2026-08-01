@@ -703,7 +703,7 @@ html.ember-living-room-active #root {
       max(10px, calc(10px + env(safe-area-inset-right, 0px)))
       calc(5px + env(safe-area-inset-bottom, 0px))
       max(10px, calc(10px + env(safe-area-inset-left, 0px)));
-    bottom: 0;
+    bottom: calc(0px - env(safe-area-inset-bottom, 0px));
     border-right: 0;
     border-bottom: 0;
     border-left: 0;
