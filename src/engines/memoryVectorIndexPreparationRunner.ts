@@ -357,7 +357,8 @@ function storedEntryToPreparedChunk(entry: MemoryVectorIndexEntry): MemorySemant
     generator: entry.generator,
     generatedAt: entry.generatedAt,
     createdAt: entry.createdAt,
-    updatedAt: entry.updatedAt
+    updatedAt: entry.updatedAt,
+    source: entry.source
   };
 }
 

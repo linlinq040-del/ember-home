@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { MemoryVectorIndexEntry, MemoryVectorIndexModelIdentity } from './memoryVectorIndexStorage';
+import type { EmberMemorySourceDescriptor } from '../types/domain';
 import { cosineSimilarity, searchMemoryVectorIndexEntries } from './memoryVectorIndexSearch';
 
 const model: MemoryVectorIndexModelIdentity = {
@@ -18,6 +19,7 @@ function entry(seed: {
   keywords?: string[];
   summary?: string;
   semanticText?: string;
+  source?: EmberMemorySourceDescriptor;
 }): MemoryVectorIndexEntry {
   return {
     version: 1,
@@ -50,6 +52,7 @@ function entry(seed: {
     generatedAt: 100,
     createdAt: 1,
     updatedAt: seed.updatedAt,
+    ...(seed.source ? { source: seed.source } : {}),
     ...(seed.vector ? {
       embedding: {
         ...(seed.model ?? model),
@@ -157,6 +160,37 @@ describe('memoryVectorIndexSearch', () => {
       queryEmbedding: [1, 0, 0],
       model,
       limit: 1
+    })).toHaveLength(1);
+  });
+
+  it('applies the same privacy boundary to vector recall', () => {
+    const journalSource: EmberMemorySourceDescriptor = {
+      domain: 'journal',
+      roomId: null,
+      sourceRecordId: 'journal-1',
+      sourceFragmentIds: ['paragraph-1'],
+      collaboratorId: 'pharos',
+      access: 'private-home',
+      retrievalPolicy: 'general'
+    };
+    const journalEntry = entry({
+      id: 'journal',
+      conversationId: 'journal-source',
+      updatedAt: 10,
+      vector: [1, 0, 0],
+      source: journalSource
+    });
+
+    expect(searchMemoryVectorIndexEntries({
+      entries: [journalEntry],
+      queryEmbedding: [1, 0, 0],
+      model
+    })).toEqual([]);
+    expect(searchMemoryVectorIndexEntries({
+      entries: [journalEntry],
+      queryEmbedding: [1, 0, 0],
+      model,
+      purpose: 'explicit'
     })).toHaveLength(1);
   });
 });

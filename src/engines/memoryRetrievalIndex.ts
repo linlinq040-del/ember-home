@@ -1,7 +1,16 @@
-import type { ChatMessage, Conversation } from '../types/domain';
+import type {
+  ChatMessage,
+  Conversation,
+  EmberMemoryRecallPurpose,
+  EmberMemorySourceDescriptor
+} from '../types/domain';
 import { extractMemoryRecallAnchors } from './memoryRecallAnchors';
 import { isNaturalMemorySourceMessage } from './memoryNaturalSourceMessage';
 import { tokenizeMemoryRecallTerms } from './memoryRecallTerms';
+import {
+  createConversationMemorySourceDescriptor,
+  isMemorySourceEligibleForRecall
+} from './memorySourcePolicy';
 
 export type MemoryRetrievalChunkKind = 'source_message' | 'user_intent' | 'dialogue_turn';
 
@@ -26,6 +35,7 @@ export type MemoryRetrievalChunk = {
   keywords: string[];
   createdAt: number;
   updatedAt: number;
+  source?: EmberMemorySourceDescriptor;
 };
 
 export type MemoryRetrievalSearchResult = {
@@ -38,7 +48,7 @@ export type MemoryRetrievalSearchResult = {
 
 export type MemoryRetrievalConversation = Pick<
   Conversation,
-  'id' | 'title' | 'collaboratorId' | 'updatedAt' | 'messages'
+  'id' | 'title' | 'collaboratorId' | 'updatedAt' | 'messages' | 'memoryContext'
 >;
 
 export function normalizeMemoryRetrievalText(text: string): string {
@@ -129,7 +139,13 @@ function buildChunk(params: {
     semanticText,
     keywords: tokenizeMemoryRetrievalQuery(`${conversationTitle} ${exactText}`),
     createdAt,
-    updatedAt
+    updatedAt,
+    source: createConversationMemorySourceDescriptor({
+      conversationId: conversation.id,
+      collaboratorId: conversation.collaboratorId,
+      sourceMessageIds,
+      memoryContext: conversation.memoryContext
+    })
   };
 }
 
@@ -283,12 +299,14 @@ function scoreChunk(queryText: string, queryTerms: string[], chunk: MemoryRetrie
 export function searchMemoryRetrievalChunks(args: {
   query: string;
   chunks: MemoryRetrievalChunk[];
+  purpose?: EmberMemoryRecallPurpose;
 }): MemoryRetrievalSearchResult[] {
   const queryText = normalizeMemoryRetrievalText(args.query);
   const queryTerms = tokenizeMemoryRetrievalQuery(args.query);
   if (!queryText && !queryTerms.length) return [];
 
   return args.chunks
+    .filter((chunk) => isMemorySourceEligibleForRecall(chunk.source, args.purpose ?? 'ambient'))
     .flatMap((chunk) => {
       const scored = scoreChunk(queryText, queryTerms, chunk);
       if (!scored) return [];

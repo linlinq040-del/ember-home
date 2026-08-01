@@ -8,6 +8,7 @@ function normalizeMemberIds(memberIds: string[]) {
 export function createDirectConversationRecord(args: {
   collaboratorId?: string | null;
   activeProjectId?: string | null;
+  memoryContext?: Conversation['memoryContext'];
 } = {}): Conversation {
   return {
     id: createUid('c'),
@@ -16,6 +17,7 @@ export function createDirectConversationRecord(args: {
     collaboratorId: args.collaboratorId ?? null,
     groupRoomId: null,
     activeProjectId: args.activeProjectId ?? null,
+    ...(args.memoryContext ? { memoryContext: args.memoryContext } : {}),
     toolLedger: undefined,
     draft: '',
     pinnedAt: null,

@@ -16,7 +16,7 @@ export type MemorySemanticPreparationInputChunk = Pick<
   | 'keywords'
   | 'createdAt'
   | 'updatedAt'
->;
+> & Pick<MemoryRetrievalChunk, 'source'>;
 
 export type RawMemorySemanticPreparation = {
   chunkId?: unknown;
@@ -44,6 +44,7 @@ export type MemorySemanticPreparedChunk = {
   generatedAt: number;
   createdAt: number;
   updatedAt: number;
+  source?: MemoryRetrievalChunk['source'];
 };
 
 type RawMemorySemanticPreparationOutput = {
@@ -192,7 +193,8 @@ export function normalizeMemorySemanticPreparations(args: {
       generator: 'small_model',
       generatedAt: args.now,
       createdAt: chunk.createdAt,
-      updatedAt: chunk.updatedAt
+      updatedAt: chunk.updatedAt,
+      source: chunk.source
     }];
   });
 }
@@ -218,6 +220,7 @@ export function prepareRawMemorySemanticChunks(args: {
     generator: 'raw_source',
     generatedAt: args.now,
     createdAt: chunk.createdAt,
-    updatedAt: chunk.updatedAt
+    updatedAt: chunk.updatedAt,
+    source: chunk.source
   }));
 }

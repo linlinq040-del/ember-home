@@ -1,4 +1,9 @@
-import type { ChatMessage, Conversation, PersonaConversationSummary } from '../types/domain';
+import type {
+  ChatMessage,
+  Conversation,
+  EmberMemorySourceDescriptor,
+  PersonaConversationSummary
+} from '../types/domain';
 import {
   buildConversationSemanticChunks,
   searchMemoryRetrievalChunks,
@@ -6,6 +11,7 @@ import {
   tokenizeMemoryRetrievalQuery,
   type MemoryRetrievalSearchResult
 } from './memoryRetrievalIndex';
+import { memorySourceFingerprint } from './memorySourcePolicy';
 
 export type MemorySearchMode = 'auto' | 'summary' | 'source';
 
@@ -31,6 +37,7 @@ export type MemorySourceSearchResult = {
   updatedAt: number;
   score: number;
   matchedKeywords: string[];
+  source?: EmberMemorySourceDescriptor;
 };
 
 export type MemorySearchResult = {
@@ -108,14 +115,17 @@ function mapSourceResult(result: MemoryRetrievalSearchResult): MemorySourceSearc
     text: chunk.exactText,
     updatedAt: chunk.updatedAt,
     score: result.score,
-    matchedKeywords: result.matchedKeywords
+    matchedKeywords: result.matchedKeywords,
+    source: chunk.source
   };
 }
 
 function dedupeSources(results: MemorySourceSearchResult[]) {
   const seen = new Set<string>();
   return results.filter((result) => {
-    const key = `${result.conversationId}:${result.sourceMessageIds.join('|')}`;
+    const key = result.source
+      ? memorySourceFingerprint(result.source)
+      : `${result.conversationId}:${result.sourceMessageIds.join('|')}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -127,7 +137,7 @@ export function searchCollaboratorMemorySources(args: {
   mode?: MemorySearchMode;
   maxResults?: number;
   summaries?: PersonaConversationSummary[];
-  conversations: Pick<Conversation, 'id' | 'title' | 'collaboratorId' | 'updatedAt' | 'messages'>[];
+  conversations: Pick<Conversation, 'id' | 'title' | 'collaboratorId' | 'updatedAt' | 'messages' | 'memoryContext'>[];
   activeConversationId?: string | null;
   currentCollaboratorId?: string | null;
 }): MemorySearchResult {

@@ -34,6 +34,7 @@ export type ChatState = {
     collaboratorId?: string | null,
     options?: {
       activeProjectId?: string | null;
+      memoryContext?: Conversation['memoryContext'];
     }
   ) => string;
   createGroupConversation: (options: {

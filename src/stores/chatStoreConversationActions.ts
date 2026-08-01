@@ -78,7 +78,8 @@ export function createChatConversationActions(
     createConversation: (collaboratorId = null, options) => {
       const next = createDirectConversationRecord({
         collaboratorId,
-        activeProjectId: options?.activeProjectId ?? null
+        activeProjectId: options?.activeProjectId ?? null,
+        memoryContext: options?.memoryContext
       });
       set((state) => ({
         conversations: sortConversations([next, ...state.conversations]),

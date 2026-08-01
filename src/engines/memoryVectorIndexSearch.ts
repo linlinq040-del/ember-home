@@ -1,4 +1,6 @@
 import { tokenizeMemoryRetrievalQuery } from './memoryRetrievalIndex';
+import { isMemorySourceEligibleForRecall } from './memorySourcePolicy';
+import type { EmberMemoryRecallPurpose } from '../types/domain';
 import {
   sameMemoryVectorIndexModelIdentity,
   type MemoryVectorIndexEntry,
@@ -64,8 +66,10 @@ export function searchMemoryVectorIndexEntries(args: {
   queryText?: string;
   activeConversationId?: string | null;
   limit?: number;
+  purpose?: EmberMemoryRecallPurpose;
 }): MemoryVectorIndexSearchResult[] {
   const results = args.entries.flatMap((entry) => {
+    if (!isMemorySourceEligibleForRecall(entry.source, args.purpose ?? 'ambient')) return [];
     if (entry.conversationId === args.activeConversationId) return [];
     if (!entry.embedding) return [];
     if (!sameMemoryVectorIndexModelIdentity(entry.embedding, args.model)) return [];

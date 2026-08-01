@@ -36,6 +36,7 @@ export type MemoryVectorIndexEntry = {
   generatedAt: number;
   createdAt: number;
   updatedAt: number;
+  source?: MemoryRetrievalChunk['source'];
   embedding?: MemoryVectorIndexEmbedding;
 };
 
@@ -151,6 +152,7 @@ export function createMemoryVectorIndexEntry(args: {
     generatedAt: args.preparedChunk.generatedAt,
     createdAt: args.preparedChunk.createdAt,
     updatedAt: args.preparedChunk.updatedAt,
+    ...(args.preparedChunk.source ? { source: args.preparedChunk.source } : {}),
     ...(args.embedding ? { embedding: args.embedding } : {})
   };
 }

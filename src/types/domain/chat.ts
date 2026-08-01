@@ -147,6 +147,7 @@ export interface Conversation {
   group?: GroupConversationState;
   groupRoomId?: string | null;
   activeProjectId?: string | null;
+  memoryContext?: import('./memory').ConversationMemoryContext;
   messages: ChatMessage[];
   toolLedger?: ToolLedgerEntry[];
   workspaceLedger?: WorkspaceLedgerEvent[];

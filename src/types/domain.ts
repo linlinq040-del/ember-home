@@ -7,3 +7,4 @@ export * from './domain/chat';
 export * from './domain/companion';
 export * from './domain/persona';
 export * from './domain/runtime';
+export * from './domain/memory';
