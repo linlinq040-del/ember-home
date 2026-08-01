@@ -50,7 +50,7 @@ describe('toolRegistry', () => {
     });
     expect(findPolarisToolManifestEntry('readPolarisKnowledge')).toMatchObject({
       name: 'readPolarisKnowledge',
-      label: '读取 Polaris 产品知识',
+      label: '读取 Ember Home 使用手册',
       group: 'knowledge',
       executorPlugin: 'utility',
       resultReplayMode: 'full-detail',

@@ -1,10 +1,14 @@
 import type { AppLanguage } from '../../i18n';
 import { PRODUCT_DOCS } from './productKnowledge/contentZh';
 import { EN_PRODUCT_DOC_TRANSLATIONS } from './productKnowledge/contentEn';
+import { EMBER_HOME_PRODUCT_GUIDE } from './productKnowledge/emberHomeGuide';
 import type { ProductDoc, ProductDocId, ProductDocSection } from './productKnowledge/types';
 
 export type { ProductDoc, ProductDocId, ProductDocSection } from './productKnowledge/types';
 export { PRODUCT_DOCS } from './productKnowledge/contentZh';
+export { EMBER_HOME_PRODUCT_GUIDE } from './productKnowledge/emberHomeGuide';
+
+const ALL_PRODUCT_DOCS: ProductDoc[] = [EMBER_HOME_PRODUCT_GUIDE, ...PRODUCT_DOCS];
 
 function localizeProductDoc(doc: ProductDoc, language: AppLanguage): ProductDoc {
   if (language === 'zh-CN') return doc;
@@ -27,7 +31,7 @@ function localizeProductDoc(doc: ProductDoc, language: AppLanguage): ProductDoc 
 }
 
 export function getProductDocs(language: AppLanguage = 'zh-CN') {
-  return PRODUCT_DOCS.map((doc) => localizeProductDoc(doc, language));
+  return ALL_PRODUCT_DOCS.map((doc) => localizeProductDoc(doc, language));
 }
 
 export function getProductDoc(id: ProductDocId, language: AppLanguage = 'zh-CN') {
@@ -116,8 +120,8 @@ export function readProductDocByTopic(doc: ProductDoc, topic?: string, language:
   if (!normalizedTopic) {
     return {
       summary: language === 'zh-CN'
-        ? '已读取 Polaris 产品知识章节索引'
-        : 'Read the Polaris product knowledge chapter index',
+        ? `已读取 ${doc.title}章节索引`
+        : `Read the ${doc.title} chapter index`,
       detailText: formatProductDocIndexAsMarkdown(doc, language)
     };
   }
@@ -125,8 +129,8 @@ export function readProductDocByTopic(doc: ProductDoc, topic?: string, language:
   if (shouldReadFullProductDoc(normalizedTopic)) {
     return {
       summary: language === 'zh-CN'
-        ? '已读取 Polaris 产品知识全文'
-        : 'Read the full Polaris product knowledge document',
+        ? `已读取 ${doc.title}全文`
+        : `Read the full ${doc.title} document`,
       detailText: formatProductDocAsMarkdown(doc, language)
     };
   }
@@ -136,16 +140,16 @@ export function readProductDocByTopic(doc: ProductDoc, topic?: string, language:
   if (!matchedSections.length) {
     return {
       summary: language === 'zh-CN'
-        ? `未找到“${topic?.trim()}”的精确章节，已返回 Polaris 产品知识章节索引`
-        : `No exact chapter found for "${topic?.trim()}"; returned the Polaris product knowledge chapter index`,
+        ? `未找到“${topic?.trim()}”的精确章节，已返回 ${doc.title}章节索引`
+        : `No exact chapter found for "${topic?.trim()}"; returned the ${doc.title} chapter index`,
       detailText: formatProductDocIndexAsMarkdown(doc, language)
     };
   }
 
   return {
     summary: language === 'zh-CN'
-      ? `已读取 Polaris 产品知识 · ${matchedSections.map((section) => section.heading).join('、')}`
-      : `Read Polaris product knowledge · ${matchedSections.map((section) => section.heading).join(', ')}`,
+      ? `已读取 ${doc.title} · ${matchedSections.map((section) => section.heading).join('、')}`
+      : `Read ${doc.title} · ${matchedSections.map((section) => section.heading).join(', ')}`,
     detailText: formatProductDocAsMarkdown({
       ...doc,
       summary: language === 'zh-CN'

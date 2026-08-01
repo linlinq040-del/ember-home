@@ -14,7 +14,7 @@ export type KnowledgeEnvironmentToolAction = Extract<
 
 /**
  * Natural-language descriptions for the knowledge and environment-directory tool actions (read
- * built-in Polaris knowledge, list/inspect/search environment nodes). Pure field formatting — no
+ * built-in Ember Home knowledge, list/inspect/search environment nodes). Pure field formatting — no
  * side effects and no theme/CSS coupling, even though these kinds sit next to the theme cases in
  * the dispatcher. The central `describeToolAction` dispatcher delegates these kinds here.
  */
@@ -23,10 +23,10 @@ export function describeKnowledgeEnvironmentToolAction(action: KnowledgeEnvironm
     case 'readPolarisKnowledge':
       return {
         kind: action.kind,
-        title: '读取 Polaris 产品知识',
+        title: '读取 Ember Home 使用手册',
         summary: action.topic?.trim()
-          ? `读取内置知识 · ${action.topic.trim()}`
-          : '读取内置知识全文',
+          ? `读取使用手册 · ${action.topic.trim()}`
+          : '读取使用手册章节索引',
         targetLabel: action.targetLabel ?? action.topic
       };
     case 'listEnvironmentNodes':

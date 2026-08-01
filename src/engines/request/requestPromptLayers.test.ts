@@ -42,8 +42,10 @@ describe('buildAssistantPromptParts', () => {
     expect(emberHome?.enabled).toBe(true);
     expect(emberHome?.layer).toBe('identity');
     expect(emberHome?.truncationPriority).toBe(0);
-    expect(emberHome?.content).toContain('书房（也叫阅读室）：一起阅读和批注');
-    expect(emberHome?.content).toContain('不要查 Polaris 产品知识');
+    expect(emberHome?.content).toContain('家中可进入的场景：书房');
+    expect(emberHome?.content).toContain('《Ember Home 使用手册》');
+    expect(emberHome?.content).toContain('唯一权威说明');
+    expect(emberHome?.content).not.toContain('书房（也叫阅读室）：一起阅读和批注');
   });
 
   it('prepends system identity before persona and capability layers', () => {

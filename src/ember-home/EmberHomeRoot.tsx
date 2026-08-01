@@ -20,6 +20,7 @@ import {
 import { LivingRoom } from './LivingRoom';
 import type { EmberPreviewRoomId } from './EmberRoomPreview';
 import {
+  EMBER_ROOM_NAVIGATION_READING_PAUSE_MS,
   resolveEmberRoomIntent,
   validateEmberRoomTarget
 } from './emberRoomNavigation';
@@ -40,6 +41,14 @@ export function EmberHomeRoot() {
     userMessageId: string;
     entry: EmberContentIndexEntry;
   } | null>(null);
+  const roomNavigationTimerRef = useRef<number | null>(null);
+
+  const cancelScheduledRoomNavigation = useCallback(() => {
+    if (roomNavigationTimerRef.current !== null) {
+      window.clearTimeout(roomNavigationTimerRef.current);
+      roomNavigationTimerRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     setEmberHomeRuntimeScene(surface);
@@ -143,6 +152,7 @@ export function EmberHomeRoot() {
 
   useEffect(() => {
     if (surface !== 'chat') {
+      cancelScheduledRoomNavigation();
       pendingRoomNavigationRef.current = null;
       return;
     }
@@ -168,6 +178,7 @@ export function EmberHomeRoot() {
       const latestUserMessage = unseen[unseen.length - 1];
       if (!latestUserMessage) return;
 
+      cancelScheduledRoomNavigation();
       const entry = resolveEmberRoomIntent(latestUserMessage.content);
       pendingRoomNavigationRef.current = entry ? {
         conversationId: conversation.id,
@@ -196,18 +207,25 @@ export function EmberHomeRoot() {
       }
 
       const target = validateEmberRoomTarget(pending.entry);
+      const scheduledConversationId = pending.conversationId;
       pendingRoomNavigationRef.current = null;
       if (!target) return;
-      setLivingRoomPage(target);
-      setSurface('living-room');
+      cancelScheduledRoomNavigation();
+      roomNavigationTimerRef.current = window.setTimeout(() => {
+        roomNavigationTimerRef.current = null;
+        if (useChatStore.getState().activeConversationId !== scheduledConversationId) return;
+        setLivingRoomPage(target);
+        setSurface('living-room');
+      }, EMBER_ROOM_NAVIGATION_READING_PAUSE_MS);
     };
 
     window.addEventListener('ember-home:assistant-presented', handleAssistantPresented);
     return () => {
       unsubscribe();
+      cancelScheduledRoomNavigation();
       window.removeEventListener('ember-home:assistant-presented', handleAssistantPresented);
     };
-  }, [surface]);
+  }, [cancelScheduledRoomNavigation, surface]);
 
   if (surface === 'living-room') {
     return <LivingRoom initialPage={livingRoomPage} onOpenChat={openChat} />;
@@ -217,6 +235,7 @@ export function EmberHomeRoot() {
     <div className="ember-chat-host">
       <AppShell
         onReturnHome={() => {
+          cancelScheduledRoomNavigation();
           pendingRoomNavigationRef.current = null;
           setLivingRoomPage('home');
           setSurface('living-room');

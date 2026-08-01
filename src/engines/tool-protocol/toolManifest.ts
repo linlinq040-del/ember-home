@@ -172,7 +172,7 @@ export const POLARIS_TOOL_FALLBACK_METADATA: Record<ToolInvocationKind, PolarisT
   readMemoryDoc: { label: '读取长期资料' },
   searchMemory: { label: '搜索过往记忆', resultReplayMode: 'full-detail' },
   openMemorySource: { label: '打开记忆原文', resultReplayMode: 'full-detail' },
-  readPolarisKnowledge: { label: '读取 Polaris 产品知识' },
+  readPolarisKnowledge: { label: '读取 Ember Home 使用手册' },
   listEnvironmentNodes: { label: '列出环境目录', group: 'environment', resultReplayMode: 'detail-excerpt' },
   inspectEnvironmentNode: { label: '检查环境节点', group: 'environment', resultReplayMode: 'detail-excerpt' },
   searchEnvironmentNodes: { label: '搜索环境目录', group: 'environment', resultReplayMode: 'detail-excerpt' },

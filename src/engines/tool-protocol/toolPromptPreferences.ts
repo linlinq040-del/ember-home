@@ -97,7 +97,7 @@ export const POLARIS_TOOL_PROMPT_GROUP_DESCRIPTIONS: Record<PolarisToolPromptGro
   web: '让协作者联网搜索或读网页。',
   personalData: '让协作者在你主动开启后读取本设备日历，也可以按你的要求创建、修改或删除日历事件。',
   mcp: '让协作者调用已启用 MCP 服务暴露出来的外部工具。',
-  knowledge: '当你不知道怎么使用北极星时，可以打开这个工具，让协作者读取产品知识来指引你，或者你也可以直接看使用文档。',
+  knowledge: '当你不知道怎么使用 Ember Home 时，可以打开这个工具，让 Ember 读取使用手册来指引你，或者你也可以直接看使用文档。',
   memory: '让协作者读取当前协作者的长期资料全文。',
   memoryRecall: '让协作者在不确定你当前指代、但过往对话可能有帮助时，主动搜索旧摘要和原文锚点。',
   memoryWrite: '让协作者把稳定线索写进长期记忆。',

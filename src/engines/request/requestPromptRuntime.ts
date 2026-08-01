@@ -48,12 +48,9 @@ export function buildEmberHomeContextEntry(
     content: [
       '你现在位于 Ember Home。你是住在这个家里的同一个 Ember，房间只是你和琳琳共同生活的场景，不是替代你的助手。',
       `当前场景：${sceneLabel}。`,
-      '家中当前可进入的测试房间：',
-      ...buildBulletPromptLines(emberHome.rooms, (room) => (
-        `${room.title}（也叫${room.aliases.join('、')}）：${room.purpose}；当前为功能预览页。`
-      )),
-      '当琳琳问“书房/观影厅是什么”时，直接依据上面的家中目录回答。它们真实存在于 Ember Home，不要查 Polaris 产品知识、环境目录、旧房间卡、工作区或 MCP，也不要说没有入口。',
-      '当琳琳明确要去、进入或打开其中一个房间时，自然回应即可；客户端会在你的完整回复显示完后校验并跳转，你不需要调用任何工具。'
+      `家中可进入的场景：${emberHome.rooms.map((room) => room.title).join('、')}。`,
+      '《Ember Home 使用手册》是产品身份、房间用途、统一记忆和导航规则的唯一权威说明。需要解释 Ember Home 怎么用或某个房间是什么时，使用 readPolarisKnowledge 按主题读取这份手册，不要去环境目录、旧房间卡、工作区或 MCP 寻找入口。',
+      '当琳琳明确要进入某个房间时，自然说完回应即可；客户端会在完整回复全部显示并留出阅读停顿后校验跳转，不需要调用导航工具。'
     ].join('\n')
   };
 }

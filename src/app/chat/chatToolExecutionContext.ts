@@ -89,7 +89,7 @@ function normalizeImageMaterialTarget(value: string) {
 }
 
 function readPolarisKnowledgeDoc(topic?: string) {
-  const result = readProductDocByTopic(getProductDoc('ai-guide'), topic);
+  const result = readProductDocByTopic(getProductDoc('ember-home-guide'), topic);
   return {
     ok: true as const,
     ...result

@@ -34,6 +34,6 @@ describe('toolPromptPreferences', () => {
     expect(POLARIS_TOOLBOX_PROMPT_GROUP_ORDER[0]).toBe('environment');
     expect(POLARIS_TOOL_PROMPT_GROUP_DESCRIPTIONS.environment).toContain('当前环境目录');
     expect(POLARIS_TOOLBOX_PROMPT_GROUP_ORDER).toContain('knowledge');
-    expect(POLARIS_TOOL_PROMPT_GROUP_DESCRIPTIONS.knowledge).toContain('不知道怎么使用北极星');
+    expect(POLARIS_TOOL_PROMPT_GROUP_DESCRIPTIONS.knowledge).toContain('不知道怎么使用 Ember Home');
   });
 });

@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
+  EMBER_ROOM_NAVIGATION_READING_PAUSE_MS,
   resolveEmberRoomIntent,
   validateEmberRoomTarget
 } from './emberRoomNavigation';
 
 describe('Ember Home room navigation', () => {
+  it('leaves a readable pause after the last assistant sentence is presented', () => {
+    expect(EMBER_ROOM_NAVIGATION_READING_PAUSE_MS).toBeGreaterThanOrEqual(1200);
+  });
+
   it.each([
     ['带我去书房', 'study'],
     ['我们进阅读室吧', 'study'],

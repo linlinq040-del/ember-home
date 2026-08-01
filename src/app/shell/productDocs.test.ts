@@ -8,6 +8,21 @@ import {
 } from './productDocs';
 
 describe('productDocs', () => {
+  it('composes one authoritative Ember Home guide from new rules and inherited product knowledge', () => {
+    const guide = getProductDoc('ember-home-guide');
+    const markdown = formatProductDocAsMarkdown(guide);
+    const study = readProductDocByTopic(guide, '书房');
+
+    expect(guide.title).toBe('Ember Home 使用手册');
+    expect(markdown).toContain('## 先确认你是谁：整个家只有一个 Ember');
+    expect(markdown).toContain('## Ember Home 的统一记忆');
+    expect(markdown).toContain('## 继承北极星能力时怎样理解旧名称');
+    expect(markdown).toContain('## 工作区预览持久化写法');
+    expect(study.summary).toContain('Ember Home 使用手册');
+    expect(study.detailText).toContain('书房（也叫阅读室、共读室）');
+    expect(study.detailText).not.toContain('## 请求和供应商原理');
+  });
+
   it('includes a theme beautification selector guide with avatar image boundaries', () => {
     const markdown = formatProductDocAsMarkdown(getProductDoc('ai-guide'));
 
@@ -50,6 +65,13 @@ describe('productDocs', () => {
     expect(index).toContain('1. 文档定位');
     expect(index).toContain('主动消息');
     expect(index.length).toBeLessThan(markdown.length);
+  });
+
+  it('uses the actual document title in read receipts', () => {
+    const guide = getProductDoc('ember-home-guide');
+
+    expect(readProductDocByTopic(guide).summary).toBe('已读取 Ember Home 使用手册章节索引');
+    expect(readProductDocByTopic(guide, '全文').summary).toBe('已读取 Ember Home 使用手册全文');
   });
 
   it('returns the chapter index by default and requires an explicit full read', () => {

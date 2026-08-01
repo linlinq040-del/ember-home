@@ -312,8 +312,7 @@ export function buildReplyToolContext(args: {
         ...snapshot.enabledToolGroups,
         environment: false,
         room: false,
-        project: false,
-        knowledge: false
+        project: false
       }
     : snapshot.enabledToolGroups;
 

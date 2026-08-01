@@ -1,4 +1,4 @@
-export type ProductDocId = 'user-guide' | 'ai-guide' | 'backup-migration' | 'privacy';
+export type ProductDocId = 'ember-home-guide' | 'user-guide' | 'ai-guide' | 'backup-migration' | 'privacy';
 
 export type ProductDocSection = {
   heading: string;

@@ -8,6 +8,8 @@ import type { EmberPreviewRoomId } from './EmberRoomPreview';
 
 const BUILT_AT = 1;
 
+export const EMBER_ROOM_NAVIGATION_READING_PAUSE_MS = 1400;
+
 const roomEntries: EmberContentIndexEntry[] = [
   {
     indexId: 'room:study',
