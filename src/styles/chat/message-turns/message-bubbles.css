@@ -3,6 +3,11 @@
 .bubble-frame.user.editing { width: min(100%, 560px); max-width: min(100%, 560px); }
 .bubble-frame.user.action-menu-open { z-index: 3; }
 .bubble-frame.assistant { align-self: flex-start; width: 100%; max-width: 100%; align-items: flex-start; }
+.bubble-frame.assistant.sentence-bubble-stack { gap: 8px; }
+.bubble-frame.assistant.sentence-bubble-stack .bubble.assistant {
+  width: fit-content;
+  max-width: min(100%, 44rem);
+}
 .bubble-frame.assistant.streaming-stage {
   position: relative;
   min-height: clamp(88px, 16vh, 148px);

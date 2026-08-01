@@ -11,6 +11,7 @@ import { runSelectionAction, runSuccessAction, selectionHaptic } from '../../../
 import { ChatAttachmentStrip } from '../ChatAttachmentStrip';
 import type { ChatEditingState } from '../context/ChatUiState';
 import { resolveCodeCardActionCopy, resolveMessageRowRoleClass } from '../messageRowMeta';
+import { splitAssistantSentenceBubbles } from './assistantSentenceBubbles';
 import { useI18n } from '../../../../i18n';
 import { buildMessageCycleAttrs, buildUserBubbleCycleAttrs } from '../userBubbleCycles';
 import { MessageActions, type MessageTaskReceiptAction } from './MessageActions';
@@ -312,7 +313,38 @@ function MessageRowComponent({
     openUserActionMenu();
   };
 
-  const messageBubble = (
+  const canUseSentenceBubbles =
+    isAssistantReply
+    && showChatAvatars
+    && !state.editing
+    && !isStreamingLike
+    && !message.attachments?.length
+    && !resolvedCardReference;
+  const sentenceBubbleContents = canUseSentenceBubbles
+    ? splitAssistantSentenceBubbles(message.content)
+    : [message.content];
+  const messageBubble = sentenceBubbleContents.length > 1 ? (
+    <div className="bubble-frame assistant sentence-bubble-stack">
+      {sentenceBubbleContents.map((content, index) => (
+        <div className="bubble assistant sentence-bubble" key={`${message.id}:sentence:${index}`}>
+          <MessageContent
+            message={{ ...message, content }}
+            codeCardActionMode={state.codeCardActionMode}
+            isCodeExpanded={state.isCodeExpanded}
+            sandboxToolInvocation={sandboxToolInvocation}
+            hasProjectedCodeToolEvent={hasProjectedCodeToolEvent}
+            hasResolvedToolEvent={toolMessages.length > 0}
+            collapseThinkingProjection={collapseThinkingProjection}
+            showThinking={false}
+            preferInlineCode={false}
+            smoothStreamingText={false}
+            onToggleCodeExpanded={() => actions.toggleCodeExpanded(message.id)}
+            onApplyCustomCss={actions.applyCustomCss}
+          />
+        </div>
+      ))}
+    </div>
+  ) : (
     <div
       ref={bubbleFrameRef}
       className={`bubble-frame ${message.role === 'assistant' ? 'assistant' : 'user'} ${state.editing ? 'editing' : ''} ${state.lifecycle} ${showStreamingPrelude ? 'streaming-prelude' : ''} ${userActionMenuOpen ? 'action-menu-open' : ''}`}
