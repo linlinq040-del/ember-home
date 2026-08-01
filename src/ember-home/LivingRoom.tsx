@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { EmberMigrationPreviewPanel } from './EmberMigrationPreviewPanel';
+import { EmberRoomPreview, type EmberPreviewRoomId } from './EmberRoomPreview';
 import { getLivingRoomGreeting } from './livingRoomGreeting';
 import { WeatherCard } from './WeatherCard';
 
@@ -7,7 +8,7 @@ type LivingRoomProps = {
   onOpenChat: () => void;
 };
 
-type LivingRoomPage = 'home' | 'rooms' | 'migration';
+type LivingRoomPage = 'home' | 'rooms' | 'migration' | EmberPreviewRoomId;
 
 const navItems = [
   { id: 'home', icon: '⌂', label: '客厅' },
@@ -18,12 +19,12 @@ const navItems = [
 ] as const;
 
 const rooms = [
-  { id: 'study', number: '01', title: '书房', note: '阅读与共同批注将在这里继续', image: '/assets/room-study-watercolor.png' },
-  { id: 'cinema', number: '02', title: '观影厅', note: '正在布置', image: '/assets/room-cinema-watercolor.png' },
-  { id: 'game', number: '03', title: '游戏厅', note: '正在布置', image: '/assets/room-game-watercolor.png' },
-  { id: 'diary', number: '04', title: '日记室', note: '正在布置', image: '/assets/room-diary-watercolor.png' },
-  { id: 'life', number: '05', title: '生活记录', note: '本地数据接入后开放', image: '/assets/room-life-watercolor.png' },
-  { id: 'studio', number: '06', title: '创作工作室', note: '正在布置', image: '/assets/room-studio-watercolor.png' }
+  { id: 'study', number: '01', title: '书房', note: '预览已开放 · 可测试跳转', image: '/assets/room-study-watercolor.png', preview: true },
+  { id: 'cinema', number: '02', title: '观影厅', note: '预览已开放 · 可测试跳转', image: '/assets/room-cinema-watercolor.png', preview: true },
+  { id: 'game', number: '03', title: '游戏厅', note: '正在布置', image: '/assets/room-game-watercolor.png', preview: false },
+  { id: 'diary', number: '04', title: '日记室', note: '正在布置', image: '/assets/room-diary-watercolor.png', preview: false },
+  { id: 'life', number: '05', title: '生活记录', note: '本地数据接入后开放', image: '/assets/room-life-watercolor.png', preview: false },
+  { id: 'studio', number: '06', title: '创作工作室', note: '正在布置', image: '/assets/room-studio-watercolor.png', preview: false }
 ] as const;
 
 export function LivingRoom({ onOpenChat }: LivingRoomProps) {
@@ -66,6 +67,14 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
     });
   };
 
+  const openRoom = (room: (typeof rooms)[number]) => {
+    if (room.preview) {
+      openPage(room.id);
+      return;
+    }
+    showComingSoon(room.title);
+  };
+
   const handleNavigation = (id: (typeof navItems)[number]['id']) => {
     if (id === 'chat') {
       onOpenChat();
@@ -93,7 +102,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
           {page === 'home' ? (
             <div className="ember-preview-brand-mark" aria-hidden="true">E</div>
           ) : (
-            <button className="ember-preview-icon-button" type="button" onClick={() => openPage('home')} aria-label="返回客厅">‹</button>
+            <button className="ember-preview-icon-button" type="button" onClick={() => openPage(page === 'study' || page === 'cinema' ? 'rooms' : 'home')} aria-label={page === 'study' || page === 'cinema' ? '返回房间列表' : '返回客厅'}>‹</button>
           )}
           <div className="ember-preview-topbar-title">
             {page === 'home' ? (
@@ -102,7 +111,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
                 <strong>{greeting}，琳琳</strong>
               </>
             ) : (
-              <strong>{page === 'rooms' ? '家里的房间' : '数据迁移预览'}</strong>
+              <strong>{page === 'rooms' ? '家里的房间' : page === 'study' ? '书房' : page === 'cinema' ? '观影厅' : '数据迁移预览'}</strong>
             )}
           </div>
           <button className="ember-preview-avatar" type="button" onClick={() => setToast('头像设置会继续保存在本机')} aria-label="自定义头像"><span>兔</span><i>＋</i></button>
@@ -176,7 +185,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
               <div className="ember-preview-rooms-intro"><span className="ember-preview-eyebrow">EMBER HOME</span><h1>今天想去哪儿？</h1><p>房间会按开发计划逐步接入；现在可以先看看未来的家。</p></div>
               <div className="ember-preview-room-gallery">
                 {rooms.map((room) => (
-                  <button className="ember-preview-room-card" type="button" key={room.id} onClick={() => showComingSoon(room.title)} aria-label={`查看${room.title}`}>
+                  <button className={`ember-preview-room-card ${room.preview ? 'is-preview-ready' : ''}`} type="button" key={room.id} onClick={() => openRoom(room)} aria-label={`查看${room.title}`}>
                     <img src={room.image} alt={`${room.title}水彩插画`} />
                     <span className="ember-preview-room-number">{room.number}</span>
                     <strong className="ember-preview-room-title">{room.title}</strong>
@@ -199,6 +208,8 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
                 <b aria-hidden="true">›</b>
               </button>
             </div>
+          ) : page === 'study' || page === 'cinema' ? (
+            <EmberRoomPreview roomId={page} onOpenChat={onOpenChat} />
           ) : (
             <EmberMigrationPreviewPanel />
           )}
@@ -207,7 +218,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
 
       <nav className="ember-preview-bottom-nav" aria-label="Ember Home 主要导航">
         {navItems.map((item) => {
-          const active = (page === 'home' && item.id === 'home') || (page === 'rooms' && item.id === 'rooms');
+          const active = (page === 'home' && item.id === 'home') || ((page === 'rooms' || page === 'study' || page === 'cinema') && item.id === 'rooms');
           return (
             <button className={`${active ? 'active' : ''} ${item.id === 'chat' ? 'center-chat' : ''}`} type="button" onClick={() => handleNavigation(item.id)} key={item.id} aria-label={item.label}>
               {item.id === 'chat' ? (
