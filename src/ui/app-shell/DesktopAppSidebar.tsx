@@ -34,6 +34,7 @@ export type DesktopAppSidebarProps = {
   onCreateConversation: () => void;
   onOpenGroupWorld: () => void;
   onOpenSettings: () => void;
+  onReturnHome?: () => void;
 };
 
 const SHELF_ICON_BY_ID = {
@@ -83,7 +84,8 @@ export function DesktopAppSidebar({
   onDeleteConversation,
   onCreateConversation,
   onOpenGroupWorld,
-  onOpenSettings
+  onOpenSettings,
+  onReturnHome
 }: DesktopAppSidebarProps) {
   const { language, t } = useI18n();
   const [collaboratorPickerOpen, setCollaboratorPickerOpen] = useState(false);
@@ -170,6 +172,18 @@ export function DesktopAppSidebar({
   return (
     <aside className={`desktop-app-sidebar ${collapsed ? 'collapsed' : ''}`} aria-label={t('desktop.navLabel')}>
       <div className="desktop-app-sidebar-topline">
+        {onReturnHome ? (
+          <button
+            type="button"
+            className="desktop-sidebar-home-button"
+            onClick={onReturnHome}
+            aria-label="返回客厅"
+            title="返回客厅"
+          >
+            <span aria-hidden="true">⌂</span>
+            <span className="desktop-sidebar-home-label">客厅</span>
+          </button>
+        ) : null}
         <button
           type="button"
           className="desktop-sidebar-collapse-toggle"

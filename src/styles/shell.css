@@ -523,6 +523,15 @@ body[data-polaris-preset='polaris-night'] .collection .pulse-dot {
   color: color-mix(in srgb, var(--text-soft) 84%, var(--text-muted) 16%);
   box-shadow: none;
 }
+.ember-home-return-btn {
+  color: color-mix(in srgb, var(--text-soft) 84%, var(--text-muted) 16%);
+}
+.ember-home-return-btn:hover,
+.ember-home-return-btn:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--accent-soft) 7%, transparent);
+  color: color-mix(in srgb, var(--text) 76%, var(--text-soft) 24%);
+}
 .chat .topbar-new-chat-btn:hover,
 .chat .topbar-new-chat-btn:focus-visible {
   background: color-mix(in srgb, var(--accent-soft) 7%, transparent);

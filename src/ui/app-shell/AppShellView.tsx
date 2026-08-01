@@ -7,7 +7,9 @@ import { PersistenceReadFailureNotice } from './PersistenceReadFailureNotice';
 import { WorldFrameBoundary, WorldFrameFallback } from './WorldFrameBoundary';
 import type { useAppShellViewController } from './useAppShellViewController';
 
-type AppShellViewProps = ReturnType<typeof useAppShellViewController>;
+type AppShellViewProps = ReturnType<typeof useAppShellViewController> & {
+  onReturnHome?: () => void;
+};
 
 export function AppShellView({
   activeWorld,
@@ -59,7 +61,8 @@ export function AppShellView({
   collectionScopeDrawerOpen,
   collectionFrameInteractive,
   chatFrameInteractive,
-  groupFrameInteractive
+  groupFrameInteractive,
+  onReturnHome
 }: AppShellViewProps) {
   const worldStack = (
     <section className="world-stack">
@@ -151,6 +154,7 @@ export function AppShellView({
       {!startupThemeReady ? <div className="startup-theme-veil" aria-hidden="true" /> : null}
       {showDesktopSidebar ? (
         <DesktopAppShellFrame
+          onReturnHome={onReturnHome}
           desktopSidebarProps={{
             ...desktopSidebarProps,
             collapsed: effectiveDesktopSidebarCollapsed,
@@ -160,7 +164,7 @@ export function AppShellView({
           {worldStack}
         </DesktopAppShellFrame>
       ) : (
-        <MobileAppShellFrame topbarProps={topbarProps}>
+        <MobileAppShellFrame topbarProps={topbarProps} onReturnHome={onReturnHome}>
           {worldStack}
         </MobileAppShellFrame>
       )}

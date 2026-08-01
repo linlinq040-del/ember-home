@@ -43,11 +43,13 @@ export type AppTopbarActions = {
 export type AppTopbarProps = {
   state: AppTopbarState;
   actions: AppTopbarActions;
+  onReturnHome?: () => void;
 };
 
 export function AppTopbar({
   state,
-  actions
+  actions,
+  onReturnHome
 }: AppTopbarProps) {
   const { t } = useI18n();
   const [brandSpinning, setBrandSpinning] = useState(false);
@@ -139,7 +141,19 @@ export function AppTopbar({
             switchLabel={t('topbar.switchRoom')}
           />
 
-          {showCollaboratorGate ? (
+          {state.activeWorld === 'chat' && onReturnHome ? (
+            <div className="topbar-actions topbar-actions--leading">
+              <button
+                type="button"
+                className="action-btn icon-btn ember-home-return-btn"
+                title="返回客厅"
+                aria-label="返回客厅"
+                onClick={(event) => handleSelectionAction(onReturnHome, event.currentTarget)}
+              >
+                <span aria-hidden="true">⌂</span>
+              </button>
+            </div>
+          ) : showCollaboratorGate ? (
             <div className="topbar-actions topbar-actions--leading">
               <button
                 type="button"

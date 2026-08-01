@@ -3,16 +3,18 @@ import { DesktopAppSidebar, type DesktopAppSidebarProps } from './DesktopAppSide
 
 type DesktopAppShellFrameProps = {
   desktopSidebarProps: DesktopAppSidebarProps;
+  onReturnHome?: () => void;
   children: ReactNode;
 };
 
 export function DesktopAppShellFrame({
   desktopSidebarProps,
+  onReturnHome,
   children
 }: DesktopAppShellFrameProps) {
   return (
     <>
-      <DesktopAppSidebar {...desktopSidebarProps} />
+      <DesktopAppSidebar {...desktopSidebarProps} onReturnHome={onReturnHome} />
       <div className="app-stage">
         {children}
       </div>

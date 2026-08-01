@@ -46,6 +46,33 @@
   gap: 8px;
 }
 
+.desktop-sidebar-home-button {
+  display: inline-flex;
+  min-width: 0;
+  height: 30px;
+  margin-right: auto;
+  align-items: center;
+  gap: 7px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: color-mix(in srgb, var(--text-soft) 72%, var(--text-muted) 28%);
+  font: inherit;
+  cursor: pointer;
+}
+
+.desktop-sidebar-home-button:hover,
+.desktop-sidebar-home-button:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--accent-soft) 32%, transparent);
+  color: var(--text);
+}
+
+.desktop-sidebar-collapsed .desktop-sidebar-home-label {
+  display: none;
+}
+
 .desktop-sidebar-collapse-toggle {
   display: inline-flex;
   width: 30px;

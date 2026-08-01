@@ -14,7 +14,11 @@ const AssetGovernanceDebugLayer = lazy(() =>
   import('./AssetGovernanceDebugLayer').then((module) => ({ default: module.AssetGovernanceDebugLayer }))
 );
 
-export function AppShell() {
+type AppShellProps = {
+  onReturnHome?: () => void;
+};
+
+export function AppShell({ onReturnHome }: AppShellProps = {}) {
   const controller = useAppShellController();
   const appLanguage = useSpaceStore((state) => state.appLanguage);
   const screenshotDebugOverlayEnabled = useSpaceStore((state) => state.screenshotDebugOverlayEnabled);
@@ -34,7 +38,7 @@ export function AppShell() {
 
   return (
     <>
-      <AppShellView {...appShellView} />
+      <AppShellView {...appShellView} onReturnHome={onReturnHome} />
       {shouldShowWorldSwitchVeil(controller.activeWorld) ? (
         <WorldSwitchVeil
           activeWorld={controller.activeWorld}

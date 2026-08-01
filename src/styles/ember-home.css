@@ -655,27 +655,6 @@
   min-height: 100%;
 }
 
-.ember-chat-host__home-button {
-  position: fixed;
-  z-index: 10020;
-  left: max(14px, env(safe-area-inset-left));
-  top: max(14px, env(safe-area-inset-top));
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 0 15px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
-  color: #fff;
-  background: rgba(43, 38, 35, 0.86);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(14px);
-  font: inherit;
-  font-size: 0.82rem;
-  cursor: pointer;
-}
-
 @media (max-width: 720px) {
   .ember-living-room { padding: 0; }
   .ember-preview-ambient { display: none; }
@@ -706,17 +685,6 @@
   .ember-preview-room-title { left: 5%; top: 27%; max-width: 42%; font-size: clamp(24px, 8vw, 34px); }
   .ember-preview-room-arrow { width: 39px; height: 39px; right: 4%; top: 9%; font-size: 23px; }
   .ember-preview-room-note { left: 5%; top: 69%; max-width: 42%; font-size: clamp(7px, 2.35vw, 10px); }
-  .ember-chat-host__home-button {
-    width: 42px;
-    min-height: 42px;
-    justify-content: center;
-    padding: 0;
-    border-color: rgba(82, 70, 78, 0.12);
-    color: #6f6069;
-    background: rgba(255, 255, 255, 0.76);
-    box-shadow: 0 8px 24px rgba(65, 52, 61, 0.12);
-  }
-  .ember-chat-host__home-button > span:last-child { display: none; }
 }
 
 @media (max-width: 390px) {

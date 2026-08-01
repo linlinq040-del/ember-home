@@ -19,16 +19,7 @@ export function EmberHomeRoot() {
 
   return (
     <div className="ember-chat-host">
-      <button
-        className="ember-chat-host__home-button"
-        type="button"
-        onClick={() => setSurface('living-room')}
-        aria-label="返回客厅"
-      >
-        <span aria-hidden="true">⌂</span>
-        <span>客厅</span>
-      </button>
-      <AppShell />
+      <AppShell onReturnHome={() => setSurface('living-room')} />
     </div>
   );
 }
