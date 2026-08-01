@@ -9,7 +9,9 @@ Current handoff and the next construction checklist are tracked in
 [`next-work.md`](./next-work.md). The 2026-08-02 checkpoint has a working living
 room, complete inherited chat, temporary Ember binding, unified product guide
 and memory path, sentence bubbles, validated room navigation, and study/theater
-navigation previews. Music and the first real study slice remain unfinished.
+navigation previews. The inherited chat still runs inside its old outer shell;
+shell convergence, real relationship dates, music, and the first study slice
+remain unfinished.
 
 1. Audit and run the inherited Polaris project on Windows.
 2. Establish the Ember Home branch, repository rules, and living-room shell.
@@ -20,10 +22,13 @@ navigation previews. Music and the first real study slice remain unfinished.
 6. Preview one sanitized Polaris backup through a staged migration adapter.
 7. Add sentence bubbles, scoped chat themes, `ContentIndex`, and validated
    natural-language navigation.
-8. Replace the living-room relationship-day mock with local relationship dates
+8. Converge the inherited chat into one `EmberHomeFrame`: preserve multiple
+   conversations and chat behavior, remove the user-facing legacy room world,
+   and enforce the three-level settings ownership model.
+9. Replace the living-room relationship-day mock with local relationship dates
    and anniversary countdowns.
-9. Add living-room music UI, mock music playback, and LRCLIB lyric matching.
-10. Build the first study/reader slice.
+10. Add living-room music UI, mock music playback, and LRCLIB lyric matching.
+11. Build the first study/reader slice.
 
 ## Later PWA phases
 
@@ -31,7 +36,8 @@ navigation previews. Music and the first real study slice remain unfinished.
 - Calendar/reminders with local and simulated Apple adapters.
 - Journals and separately encrypted cycle/body records.
 - Voice messages and foreground real-time calls.
-- Theater, game adapters, creation studio, and confirmation-based publishing.
+- Toy room and toy shelf, photo album, creation studio, theater, game adapters,
+  and confirmation-based publishing.
 - Optional sync, backup, and narrowly scoped always-on services.
 
 ## Native phase gate

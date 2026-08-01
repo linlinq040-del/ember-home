@@ -9,10 +9,12 @@ rewrite until behavior is protected by tests and migration fixtures.
 ```text
 Ember Home PWA
 ├── Product shell
-│   ├── Living room
+│   ├── EmberHomeFrame and one route owner
+│   ├── Living room and shared bottom navigation
 │   ├── Safe internal navigation
 │   └── Room-specific context assembly
 ├── Existing chat orchestration
+│   ├── EmberChatSurface (without the inherited outer AppShell)
 │   ├── Streaming and sentence presentation
 │   ├── Provider/model configuration
 │   ├── Attachments, retry/edit, and tool evidence
@@ -28,6 +30,9 @@ Ember Home PWA
 │   └── Browser KV/IndexedDB backend
 ├── Content and rooms
 │   ├── ContentIndex
+│   ├── Toy shelf → inherited cards
+│   ├── Creation studio → independent workspaces
+│   ├── Album → inherited image assets
 │   ├── Study / theater / game adapters
 │   └── Calendar / journal / pet / studio domains
 └── Platform provider interfaces
@@ -56,11 +61,50 @@ Optional external MCP tools
 - Ember Home never automatically reads from or writes to OmbreBrain. If the
   user enables it as an MCP tool, every use follows the tool's explicit scope;
   Ember identity, startup, migration, and continuity never depend on it.
+- The word `room` is user-facing only for Ember Home scenes. Legacy field names
+  such as `room`, `collectionShelf`, and `readPolarisKnowledge` may remain in
+  compatibility code, but they do not define the product information model.
+- Cards, workspaces, and image assets keep their existing LocalData identities.
+  Shell convergence changes routes and projections, not durable records.
+- A workspace is an independent multi-file project. Publishing a project result
+  to the toy shelf is an explicit optional operation, never an automatic link.
+
+## Settings ownership
+
+```text
+Chat-local settings
+└── chat theme and presentation
+
+Ember settings (living-room Ember avatar)
+├── identity and prompt
+├── memory
+├── proactive messages
+└── per-Ember request preferences
+
+Ember Home settings (bottom of rooms page)
+├── permissions and storage
+├── backup and migration
+├── providers and credentials
+├── tools and MCP
+└── diagnostics and platform-wide behavior
+```
+
+These settings surfaces may reuse inherited controllers and stores, but their
+routes and labels follow Ember Home ownership. A global provider credential
+must not be presented as Ember identity, and chat theme must not become a
+whole-app settings page.
 
 ## Immediate implementation seam
 
-The first living-room slice wraps the existing `AppShell` instead of adding a
-fourth inherited `World`. This keeps the mature chat/world transition system
-unchanged while product navigation is defined. Once the route contract and
-room persistence are stable, rooms can move behind a dedicated Ember Home
-router without rewriting chat internals.
+The first living-room slice temporarily wraps the existing `AppShell`. That
+seam has now served its purpose and is the source of the visible two-app split.
+The next architectural step is to make `EmberHomeFrame` the single lifecycle
+and route owner, then mount a shell-independent `EmberChatSurface` that reuses
+the mature chat controllers and stores.
+
+The inherited outer shell is retired only after parity checks cover multiple
+conversations, history, streaming, tools, attachments, retry/edit, export,
+themes, memory, and settings access. The legacy collection surface is then
+decomposed by responsibility: conversations stay in chat, cards route to the
+toy shelf, workspaces route to the creation studio, images route to the album,
+and Ember configuration routes through the living-room avatar.

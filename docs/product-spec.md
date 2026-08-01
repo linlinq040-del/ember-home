@@ -37,6 +37,50 @@ landscape. Room names organize functions; Ember Home is not a simulated 2D or
 - A local `ContentIndex` and validated natural-language navigation actions.
 - Music UI with a mock `MusicProvider` and LRCLIB `LyricsProvider` during PWA.
 
+## Information architecture and terminology
+
+- **Room** is reserved for Ember Home life scenes such as the living room,
+  study, theater, toy room, album, and creation studio. An inherited Polaris
+  collection surface must not remain user-visible as another kind of room.
+- **Conversation** means one chat thread. Chat keeps new conversation, history,
+  switching, branching, rename, export, and deletion. Multiple conversations
+  belong to the same Ember and share only confirmed or retrieved memory rather
+  than an ever-growing raw context.
+- Inherited cards move to the toy room's toy shelf. Card IDs, contents, asset
+  references, edit/run behavior, and tool-card behavior remain intact.
+- Inherited workspaces remain independent project environments and move to the
+  creation studio. They are not automatically attached to toys. A project may
+  be explicitly published as a toy snapshot later, but creating or deleting
+  either side does not mutate the other by default.
+- Inherited images move to the album as views over the existing asset store.
+  Personal photos, Ember-generated images, and project materials retain source
+  and privacy metadata; cards and projects reference assets instead of copying
+  them.
+
+## Three levels of settings
+
+1. **Chat settings:** the chat-local button keeps only chat theme and chat
+   presentation controls.
+2. **Ember settings:** tapping Ember's avatar from the living room opens
+   identity, prompt, memory, proactive-message, and request-preference pages.
+3. **Ember Home settings:** the entry at the bottom of the rooms page governs
+   the whole app, including permissions, storage, backup, providers, tools,
+   MCP, diagnostics, and other platform-wide behavior.
+
+Global provider credentials are Ember Home settings. Per-Ember request
+preferences are Ember settings. Shell convergence must not flatten these three
+ownership levels into one generic settings page.
+
+## Product manual strategy
+
+`Ember Home 使用手册` is the authoritative model-facing product document. It is
+updated as each feature becomes real. The model reads a compact chapter index
+first and retrieves only relevant chapters, so the completed manual may be
+large without being injected into every conversation. At PWA completion, the
+manual receives a full editorial pass to remove stale inherited instructions,
+verify every user-facing path, and keep Polaris names only where required for
+migration, compatibility, or technical audit.
+
 ## Safety boundaries
 
 - Navigation may execute automatically only after the displayed reply completes
