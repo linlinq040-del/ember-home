@@ -9,7 +9,8 @@ belong in feature specifications and architecture decision records.
 2. Establish the Ember Home branch, repository rules, and living-room shell.
 3. Deploy an installable HTTPS PWA and verify iPhone/iPad home-screen behavior.
 4. Preserve and validate the complete chat workflow.
-5. Connect Ember identity, chat memory, and OmbreBrain routing.
+5. Connect Ember identity to Ember Home's built-in unified memory. Keep
+   OmbreBrain available only as an optional, explicitly invoked MCP tool.
 6. Preview one sanitized Polaris backup through a staged migration adapter.
 7. Add sentence bubbles, scoped chat themes, `ContentIndex`, and validated
    natural-language navigation.

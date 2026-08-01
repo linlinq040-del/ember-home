@@ -30,8 +30,9 @@ landscape. Room names organize functions; Ember Home is not a simulated 2D or
 - A permanently conversational chat layout with optional sentence bubbles.
 - Existing streaming, provider configuration, retry/edit, attachment, tool
   evidence, context, themes, and conversation history preserved.
-- Ember identity plus current chat memory and optional OmbreBrain long-term
-  retrieval without creating a third generic memory store.
+- Ember identity plus Ember Home's built-in unified memory across chat and
+  room contexts. OmbreBrain remains an optional MCP tool, not a memory backend
+  or migration dependency.
 - Local migration preview for a Polaris export before any data is promoted.
 - A local `ContentIndex` and validated natural-language navigation actions.
 - Music UI with a mock `MusicProvider` and LRCLIB `LyricsProvider` during PWA.

@@ -19,8 +19,8 @@ Ember Home PWA
 │   └── Conversation history and themes
 ├── Memory router
 │   ├── Current conversation
-│   ├── Chat retrieval
-│   └── OmbreBrain long-term memory (on demand)
+│   ├── Confirmed Ember memory
+│   └── Cross-room summaries and source retrieval
 ├── LocalData
 │   ├── Structured product facts
 │   ├── Blobs/assets
@@ -33,6 +33,9 @@ Ember Home PWA
 └── Platform provider interfaces
     ├── PWA local or mock adapters
     └── Native adapters after the PWA completion gate
+
+Optional external MCP tools
+└── OmbreBrain (explicit invocation only; never a memory backend)
 ```
 
 ## Boundary rules
@@ -49,7 +52,10 @@ Ember Home PWA
 - Provider interfaces isolate PWA mocks from later EventKit, MusicKit, and
   HealthKit implementations.
 - Raw health, journal, and cycle data never enter broad chat retrieval,
-  OmbreBrain, public-material queries, or logs.
+  external MCP calls, public-material queries, or logs.
+- Ember Home never automatically reads from or writes to OmbreBrain. If the
+  user enables it as an MCP tool, every use follows the tool's explicit scope;
+  Ember identity, startup, migration, and continuity never depend on it.
 
 ## Immediate implementation seam
 
