@@ -659,12 +659,25 @@
   .ember-living-room { padding: 0; }
   .ember-preview-ambient { display: none; }
   .ember-preview-frame { min-height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
-  .ember-preview-topbar { height: 80px; padding: 17px 18px; }
+  .ember-preview-topbar {
+    height: calc(80px + env(safe-area-inset-top, 0px));
+    padding:
+      calc(17px + env(safe-area-inset-top, 0px))
+      max(18px, calc(18px + env(safe-area-inset-right, 0px)))
+      17px
+      max(18px, calc(18px + env(safe-area-inset-left, 0px)));
+  }
   .ember-preview-brand-mark,
   .ember-preview-avatar,
   .ember-preview-icon-button { width: 41px; height: 41px; border-radius: 14px; }
   .ember-preview-topbar-title strong { font-size: 20px; }
-  .ember-preview-page-area { padding: 18px 15px 110px; }
+  .ember-preview-page-area {
+    padding:
+      18px
+      max(15px, calc(15px + env(safe-area-inset-right, 0px)))
+      calc(110px + env(safe-area-inset-bottom, 0px))
+      max(15px, calc(15px + env(safe-area-inset-left, 0px)));
+  }
   .ember-preview-hero-grid,
   .ember-preview-lower-grid { grid-template-columns: 1fr; }
   .ember-preview-weather-card { min-height: 215px; }
@@ -676,7 +689,10 @@
   .ember-preview-note p { font-size: 14px; }
   .ember-preview-pet-stage { gap: 18px; }
   .ember-preview-tuantuan { width: 137px; height: 133px; }
-  .ember-preview-bottom-nav { width: calc(100% - 20px); bottom: 10px; }
+  .ember-preview-bottom-nav {
+    width: calc(100% - 20px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
   .ember-preview-bottom-nav button > span { font-size: 18px; }
   .ember-preview-rooms-intro h1 { font-size: 26px; }
   .ember-preview-room-gallery { gap: 13px; }
@@ -685,6 +701,12 @@
   .ember-preview-room-title { left: 5%; top: 27%; max-width: 42%; font-size: clamp(24px, 8vw, 34px); }
   .ember-preview-room-arrow { width: 39px; height: 39px; right: 4%; top: 9%; font-size: 23px; }
   .ember-preview-room-note { left: 5%; top: 69%; max-width: 42%; font-size: clamp(7px, 2.35vw, 10px); }
+}
+
+@media (max-width: 720px) and (display-mode: standalone) {
+  .ember-preview-toast {
+    bottom: calc(118px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 @media (max-width: 390px) {
