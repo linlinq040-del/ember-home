@@ -373,11 +373,10 @@
 }
 
 .ember-chat-host > .app-shell {
-  width: min(100%, 460px);
-  max-width: 460px;
+  width: 100%;
+  max-width: none;
   height: 100%;
   min-height: 100%;
-  box-shadow: 0 0 80px rgba(0, 0, 0, 0.28);
 }
 
 .ember-chat-host__home-button > span:first-child {
