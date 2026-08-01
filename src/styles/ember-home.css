@@ -593,6 +593,45 @@ html.ember-living-room-active #root {
 .ember-preview-settings-entry-copy small { color: var(--ember-preview-muted); font-size: 10px; }
 .ember-preview-settings-entry > b { color: #988a94; font-size: 25px; font-weight: 400; }
 
+.ember-migration-preview { width: min(820px, 100%); margin: 0 auto; }
+
+.ember-migration-picker {
+  min-height: 150px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px dashed rgba(111, 82, 105, 0.28);
+  border-radius: 28px;
+  color: #62505f;
+  background: rgba(255, 253, 250, 0.86);
+  box-shadow: 0 14px 34px rgba(74, 57, 68, 0.07);
+  text-align: center;
+}
+
+.ember-migration-picker input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.ember-migration-picker > span { font-size: 30px; }
+.ember-migration-picker strong { font-size: 15px; }
+.ember-migration-picker small { color: var(--ember-preview-muted); font-size: 10px; }
+.ember-migration-error { margin-top: 14px; padding: 13px 16px; border-radius: 16px; color: #8b4552; background: #f7e5e7; font-size: 12px; }
+.ember-migration-result { margin-top: 18px; display: grid; gap: 14px; }
+.ember-migration-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ember-migration-summary > span { padding: 14px; display: flex; flex-direction: column; gap: 3px; border-radius: 18px; background: rgba(255, 253, 250, 0.84); }
+.ember-migration-summary small { color: var(--ember-preview-muted); font-size: 9px; }
+.ember-migration-summary strong { font: 500 24px/1 Georgia, "Songti SC", serif; }
+.ember-migration-recommendation { padding: 22px; border-radius: 24px; background: rgba(255, 253, 250, 0.9); box-shadow: 0 13px 30px rgba(74, 57, 68, 0.07); }
+.ember-migration-recommendation h2 { margin: 8px 0 5px; font: 500 27px/1.2 Georgia, "Songti SC", serif; }
+.ember-migration-recommendation p { margin: 0; color: var(--ember-preview-muted); font-size: 11px; }
+.ember-migration-recommendation ul { margin: 14px 0; padding-left: 18px; color: #6b5a67; font-size: 11px; }
+.ember-migration-confirm-note { color: #856174; font-size: 11px; }
+.ember-migration-candidates { display: grid; gap: 8px; }
+.ember-migration-candidates > div { padding: 13px 15px; display: flex; align-items: center; justify-content: space-between; border-radius: 17px; background: rgba(255, 253, 250, 0.78); }
+.ember-migration-candidates span { display: flex; flex-direction: column; gap: 2px; }
+.ember-migration-candidates small { color: var(--ember-preview-muted); font-size: 9px; }
+.ember-migration-candidates em { padding: 5px 8px; border-radius: 999px; color: #7a5e71; background: #eee3eb; font-size: 9px; font-style: normal; }
+
 .ember-preview-bottom-nav {
   width: min(570px, calc(100% - 30px));
   height: 76px;

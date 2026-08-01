@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import { EmberMigrationPreviewPanel } from './EmberMigrationPreviewPanel';
 import { getLivingRoomGreeting } from './livingRoomGreeting';
 
 type LivingRoomProps = {
   onOpenChat: () => void;
 };
 
-type LivingRoomPage = 'home' | 'rooms';
+type LivingRoomPage = 'home' | 'rooms' | 'migration';
 
 const navItems = [
   { id: 'home', icon: '⌂', label: '客厅' },
@@ -100,7 +101,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
                 <strong>{greeting}，琳琳</strong>
               </>
             ) : (
-              <strong>家里的房间</strong>
+              <strong>{page === 'rooms' ? '家里的房间' : '数据迁移预览'}</strong>
             )}
           </div>
           <button className="ember-preview-avatar" type="button" onClick={() => setToast('头像设置会继续保存在本机')} aria-label="自定义头像"><span>兔</span><i>＋</i></button>
@@ -172,7 +173,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
                 </div>
               </section>
             </div>
-          ) : (
+          ) : page === 'rooms' ? (
             <div className="ember-preview-rooms-page">
               <div className="ember-preview-rooms-intro"><span className="ember-preview-eyebrow">EMBER HOME</span><h1>今天想去哪儿？</h1><p>房间会按开发计划逐步接入；现在可以先看看未来的家。</p></div>
               <div className="ember-preview-room-gallery">
@@ -189,7 +190,7 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
               <button
                 className="ember-preview-settings-entry"
                 type="button"
-                onClick={() => showComingSoon('Ember Home 系统设置')}
+                onClick={() => openPage('migration')}
                 aria-label="打开 Ember Home 系统设置"
               >
                 <span className="ember-preview-settings-entry-icon" aria-hidden="true">⚙</span>
@@ -200,6 +201,8 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
                 <b aria-hidden="true">›</b>
               </button>
             </div>
+          ) : (
+            <EmberMigrationPreviewPanel />
           )}
         </div>
       </section>
