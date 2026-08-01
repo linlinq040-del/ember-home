@@ -20,8 +20,10 @@ navigation previews. Music and the first real study slice remain unfinished.
 6. Preview one sanitized Polaris backup through a staged migration adapter.
 7. Add sentence bubbles, scoped chat themes, `ContentIndex`, and validated
    natural-language navigation.
-8. Add living-room music UI, mock music playback, and LRCLIB lyric matching.
-9. Build the first study/reader slice.
+8. Replace the living-room relationship-day mock with local relationship dates
+   and anniversary countdowns.
+9. Add living-room music UI, mock music playback, and LRCLIB lyric matching.
+10. Build the first study/reader slice.
 
 ## Later PWA phases
 
