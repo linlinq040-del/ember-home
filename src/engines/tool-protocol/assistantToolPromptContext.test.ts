@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildCardContextPrompt } from './assistantToolPromptContext';
+import { buildCardContextPrompt, buildUiContextPrompt } from './assistantToolPromptContext';
 import { buildWorkspaceContextPrompt } from './assistantToolPromptWorkspace';
 import type { AssistantToolContext } from './assistantToolProtocolTypes';
 
@@ -29,6 +29,29 @@ function createContext(
 }
 
 describe('assistantToolPromptContext', () => {
+  it('explains Ember Home rooms without treating them as legacy room cards', () => {
+    const prompt = buildUiContextPrompt({
+      activeCard: null,
+      visibleCards: [],
+      emberHome: {
+        scene: 'chat',
+        rooms: [
+          {
+            id: 'study',
+            title: '书房',
+            aliases: ['阅读室'],
+            purpose: '一起阅读和批注',
+            availability: 'preview'
+          }
+        ]
+      }
+    });
+
+    expect(prompt).toContain('当前产品是 Ember Home');
+    expect(prompt).toContain('书房（别名：阅读室）· 一起阅读和批注');
+    expect(prompt).toContain('不要调用环境目录、房间卡、工作区或 MCP 工具');
+  });
+
   it('keeps room content out of prompt when room context is only available', () => {
     const prompt = buildCardContextPrompt(createContext('available'));
     expect(prompt).toContain('当前屏幕选中的房间：Landing Hero（tsx） id=card-1');

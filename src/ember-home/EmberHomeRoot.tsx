@@ -24,6 +24,7 @@ import {
   validateEmberRoomTarget
 } from './emberRoomNavigation';
 import type { EmberContentIndexEntry } from './contentIndex';
+import { setEmberHomeRuntimeScene } from './emberHomeRuntimeContext';
 
 type EmberHomeSurface = 'living-room' | 'chat';
 
@@ -39,6 +40,11 @@ export function EmberHomeRoot() {
     userMessageId: string;
     entry: EmberContentIndexEntry;
   } | null>(null);
+
+  useEffect(() => {
+    setEmberHomeRuntimeScene(surface);
+    return () => setEmberHomeRuntimeScene(null);
+  }, [surface]);
 
   useEffect(() => {
     if (!persistentStoreLifecycle.startupStoresReady) return;

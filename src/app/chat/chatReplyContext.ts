@@ -40,6 +40,7 @@ import type { RuntimeFeedbackEvent } from '../../engines/runtime-feedback/runtim
 import type { PendingWorkspaceProposalRecord } from '../../engines/workspaceBinding';
 import { resolveConversationTaskMode } from '../../engines/conversationTask';
 import { buildWorkContext } from '../../engines/workContext';
+import { readEmberHomePromptContext } from '../../ember-home/emberHomeRuntimeContext';
 
 function buildAttachmentSnapshot(messages: ChatMessage[]) {
   const available = messages.flatMap((message) => message.attachments?.filter((attachment) => !attachment.clearedAt) ?? []);
@@ -308,6 +309,7 @@ export function buildReplyToolContext(args: {
     modelTier,
     effectiveActiveCardId,
     toolContext: {
+      emberHome: readEmberHomePromptContext(),
       activeCard,
       activeCardReferenceMode,
       roomContextMode: resolveRoomContextMode({

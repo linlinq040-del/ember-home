@@ -20,6 +20,7 @@ import type { RoomProjectTreeSnapshot } from '../roomProjects';
 import type { RuntimeFeedbackEvent } from '../runtime-feedback/runtimeFeedbackEvents';
 import type { PendingWorkspaceProposal } from '../workspaceBinding';
 import type { WorkContextProjection } from '../workContext';
+import type { EmberHomePromptContext } from '../../ember-home/emberHomeRuntimeContext';
 
 type StableSurfaceSnapshot = {
   surfaceCode: string;
@@ -72,6 +73,7 @@ export type PolarisToolPromptPreferences = Partial<Record<PolarisToolPromptGroup
 export type RunCodeSandboxProfile = 'safe' | 'experimental';
 
 export type AssistantToolContext = {
+  emberHome?: EmberHomePromptContext | null;
   activeCard: CodeCard | null;
   activeCardReferenceMode?: 'continue' | 'reference' | 'ambient';
   visibleCards: CodeCard[];
