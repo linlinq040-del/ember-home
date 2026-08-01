@@ -173,11 +173,18 @@ export function createChatMemoryActions({
       query: normalizedQuery,
       mode,
       maxResults,
+      personalMemories: targetCollaborator.memory.personalMemories,
       summaries: targetCollaborator.memory.conversationSummaries,
       conversations: store.chat.conversations,
       activeConversationId: conversationId ?? null,
       currentCollaboratorId: targetCollaborator.id
     });
+    const confirmedMemoryLines = result.confirmedMemories.map((memory, index) => [
+      `${index + 1}. 已确认记忆 · memoryId=${memory.id}`,
+      `authority=${memory.authority}`,
+      `matched=${memory.matchedKeywords.join(', ') || 'exact'}`,
+      excerptText(memory.text)
+    ].join('\n'));
     const summaryLines = result.summaries.map((summary, index) => [
       `${index + 1}. ${summary.title} · summaryId=${summary.id} · updated=${formatDate(summary.updatedAt)}`,
       `sourceConversationIds=${summary.sourceConversationIds.join(', ') || 'none'}`,
@@ -194,11 +201,14 @@ export function createChatMemoryActions({
     ].join('\n'));
     const detailText = [
       `query=${normalizedQuery}`,
+      confirmedMemoryLines.length
+        ? `## 已确认记忆（优先于旧总结和旧对话）\n${confirmedMemoryLines.join('\n\n')}`
+        : '## 已确认记忆\n没有匹配到已确认记忆。',
       summaryLines.length ? `## 总结候选\n${summaryLines.join('\n\n')}` : '## 总结候选\n没有匹配到摘要。',
       sourceLines.length ? `## 原文候选\n${sourceLines.join('\n\n')}` : '## 原文候选\n没有匹配到原文锚点。',
       '需要确认原文时，使用 openMemorySource 读取 sourceConversationId + sourceMessageIds。'
     ].join('\n\n');
-    const total = result.summaries.length + result.sources.length;
+    const total = result.confirmedMemories.length + result.summaries.length + result.sources.length;
     return {
       ok: true as const,
       summary: `已搜索记忆 · ${total} 个候选`,

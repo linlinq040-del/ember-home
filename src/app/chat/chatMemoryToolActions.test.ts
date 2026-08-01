@@ -73,8 +73,9 @@ function createPersona(): Persona {
   } as unknown as Persona;
 }
 
-function createMemoryActions() {
+function createMemoryActions(personalMemories: string[] = []) {
   const persona = createPersona();
+  persona.memory.personalMemories = personalMemories;
   const addRuntimeToolMessage = vi.fn();
   const setCommandStatus = vi.fn();
   const updateCollaborator = vi.fn();
@@ -83,6 +84,7 @@ function createMemoryActions() {
     ui: { setCommandStatus },
     store: {
       chat: {
+        conversations: [],
         findConversation: vi.fn(() => ({ id: 'conv-1', collaboratorId: 'pharos' })),
         updateMessage
       } as never,
@@ -151,6 +153,22 @@ describe('createChatMemoryActions', () => {
     expect(invocation?.status).toBe('executed');
     expect(invocation?.summary).not.toContain('关闭了自动写入');
     expect(setCommandStatus).not.toHaveBeenCalled();
+  });
+
+  it('searches confirmed collaborator memories without a vector model', () => {
+    const { actions } = createMemoryActions(['用户的测试饮料已经改成柠檬水。']);
+
+    const result = actions.searchCollaboratorMemory!('测试饮料', 'auto', 3, 'conv-1');
+
+    expect(result).toEqual(expect.objectContaining({
+      ok: true,
+      summary: expect.stringContaining('1')
+    }));
+    if (result.ok) {
+      expect(result.detailText).toContain('已确认记忆');
+      expect(result.detailText).toContain('authority=confirmed_memory');
+      expect(result.detailText).toContain('柠檬水');
+    }
   });
 
   it('previews sensitive memory writes without removed legacy copy', () => {

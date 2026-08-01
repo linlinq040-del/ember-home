@@ -59,6 +59,7 @@ describe('memoryToolSearch', () => {
       currentCollaboratorId: 'pharos'
     });
 
+    expect(result.confirmedMemories).toEqual([]);
     expect(result.summaries).toEqual([
       expect.objectContaining({
         id: 'wisdom-summary',
@@ -72,6 +73,42 @@ describe('memoryToolSearch', () => {
         sourceMessageIds: ['old-user', 'old-assistant']
       })
     ]);
+  });
+
+  it('finds confirmed personal memory without vector search', () => {
+    const result = searchCollaboratorMemorySources({
+      query: '测试饮料',
+      personalMemories: ['用户的测试饮料已经改成柠檬水。'],
+      conversations: [],
+      currentCollaboratorId: 'pharos'
+    });
+
+    expect(result.confirmedMemories).toEqual([
+      expect.objectContaining({
+        kind: 'confirmed_memory',
+        text: '用户的测试饮料已经改成柠檬水。',
+        authority: 'confirmed_memory'
+      })
+    ]);
+    expect(result.summaries).toEqual([]);
+    expect(result.sources).toEqual([]);
+  });
+
+  it('uses one candidate budget and prioritizes confirmed memory', () => {
+    const result = searchCollaboratorMemorySources({
+      query: '测试饮料',
+      maxResults: 1,
+      personalMemories: ['用户的测试饮料已经改成柠檬水。'],
+      summaries: [summary({ id: 'old-drink', content: '用户以前的测试饮料是茉莉花茶。' })],
+      conversations: [conversation({
+        id: 'old',
+        messages: [message('old-user', 'user', '测试饮料是茉莉花茶。', 1)]
+      })]
+    });
+
+    expect(result.confirmedMemories).toHaveLength(1);
+    expect(result.summaries).toEqual([]);
+    expect(result.sources).toEqual([]);
   });
 
   it('opens only requested memory source messages and marks truncation', () => {

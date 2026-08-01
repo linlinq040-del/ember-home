@@ -15,6 +15,15 @@ import { memorySourceFingerprint } from './memorySourcePolicy';
 
 export type MemorySearchMode = 'auto' | 'summary' | 'source';
 
+export type ConfirmedMemorySearchResult = {
+  kind: 'confirmed_memory';
+  id: string;
+  text: string;
+  score: number;
+  matchedKeywords: string[];
+  authority: 'confirmed_memory';
+};
+
 export type MemorySummarySearchResult = {
   kind: 'summary';
   id: string;
@@ -41,6 +50,7 @@ export type MemorySourceSearchResult = {
 };
 
 export type MemorySearchResult = {
+  confirmedMemories: ConfirmedMemorySearchResult[];
   summaries: MemorySummarySearchResult[];
   sources: MemorySourceSearchResult[];
 };
@@ -67,6 +77,37 @@ function sameCollaboratorScope(args: {
 }) {
   if (!args.currentCollaboratorId) return true;
   return args.conversationCollaboratorId === args.currentCollaboratorId;
+}
+
+function stableMemoryId(text: string) {
+  let hash = 2_166_136_261;
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16_777_619);
+  }
+  return `confirmed-${(hash >>> 0).toString(36)}`;
+}
+
+function scoreConfirmedMemory(query: string, memory: string): ConfirmedMemorySearchResult | null {
+  const text = memory.trim();
+  const queryText = normalizeMemoryRetrievalText(query);
+  const searchable = normalizeMemoryRetrievalText(text);
+  const queryTerms = tokenizeMemoryRetrievalQuery(query);
+  if (!text || (!queryText && !queryTerms.length)) return null;
+
+  const exactPhraseMatch = queryText.length > 0 && searchable.includes(queryText);
+  const matchedKeywords = queryTerms.filter((term) => searchable.includes(term));
+  if (!exactPhraseMatch && !matchedKeywords.length) return null;
+
+  const overlapScore = queryTerms.length ? matchedKeywords.length / queryTerms.length : 0;
+  return {
+    kind: 'confirmed_memory',
+    id: stableMemoryId(searchable),
+    text,
+    score: 10 + (exactPhraseMatch ? 2 : 0) + overlapScore,
+    matchedKeywords: Array.from(new Set(matchedKeywords)),
+    authority: 'confirmed_memory'
+  };
 }
 
 function scoreSummary(query: string, summary: PersonaConversationSummary): MemorySummarySearchResult | null {
@@ -136,6 +177,7 @@ export function searchCollaboratorMemorySources(args: {
   query: string;
   mode?: MemorySearchMode;
   maxResults?: number;
+  personalMemories?: string[];
   summaries?: PersonaConversationSummary[];
   conversations: Pick<Conversation, 'id' | 'title' | 'collaboratorId' | 'updatedAt' | 'messages' | 'memoryContext'>[];
   activeConversationId?: string | null;
@@ -143,7 +185,14 @@ export function searchCollaboratorMemorySources(args: {
 }): MemorySearchResult {
   const mode = args.mode ?? 'auto';
   const maxResults = resolvePositiveLimit(args.maxResults, DEFAULT_MEMORY_SEARCH_MAX_RESULTS);
-  const summaries = mode === 'source'
+  const confirmedMemories = mode === 'auto'
+    ? (args.personalMemories ?? [])
+        .flatMap((memory) => scoreConfirmedMemory(args.query, memory) ?? [])
+        .sort((left, right) => right.score - left.score)
+        .slice(0, maxResults)
+    : [];
+  const remainingAfterConfirmed = Math.max(0, maxResults - confirmedMemories.length);
+  const summaryCandidates = mode === 'source'
     ? []
     : (args.summaries ?? [])
         .flatMap((summary) => scoreSummary(args.query, summary) ?? [])
@@ -151,10 +200,9 @@ export function searchCollaboratorMemorySources(args: {
           const scoreDelta = right.score - left.score;
           if (scoreDelta !== 0) return scoreDelta;
           return right.updatedAt - left.updatedAt;
-        })
-        .slice(0, maxResults);
+        });
 
-  const sourceResults = mode === 'summary'
+  const sourceCandidates = mode === 'summary'
     ? []
     : dedupeSources(searchMemoryRetrievalChunks({
         query: args.query,
@@ -163,9 +211,20 @@ export function searchCollaboratorMemorySources(args: {
           activeConversationId: args.activeConversationId,
           currentCollaboratorId: args.currentCollaboratorId
         })
-      }).map(mapSourceResult)).slice(0, maxResults);
+      }).map(mapSourceResult));
+
+  const hasBothHistoricalKinds = summaryCandidates.length > 0 && sourceCandidates.length > 0;
+  const summaryLimit = hasBothHistoricalKinds && remainingAfterConfirmed >= 2
+    ? Math.ceil(remainingAfterConfirmed / 2)
+    : remainingAfterConfirmed;
+  const summaries = summaryCandidates.slice(0, summaryLimit);
+  const sourceResults = sourceCandidates.slice(
+    0,
+    Math.max(0, remainingAfterConfirmed - summaries.length)
+  );
 
   return {
+    confirmedMemories,
     summaries,
     sources: sourceResults
   };
