@@ -25,6 +25,39 @@ export function buildRuntimeClockEntry(
   };
 }
 
+export function buildEmberHomeContextEntry(
+  toolContext?: AssistantToolContext
+): Omit<AssistantPromptPart, 'enabled' | 'charCount'> | null {
+  const emberHome = toolContext?.emberHome;
+  if (!emberHome) return null;
+
+  const sceneLabel = emberHome.scene === 'chat'
+    ? '聊天室'
+    : emberHome.scene === 'living-room'
+      ? '客厅'
+      : emberHome.scene === 'study'
+        ? '书房'
+        : '观影厅';
+
+  return {
+    name: 'ember_home_context',
+    label: 'Ember Home 场景',
+    role: 'system',
+    layer: 'identity',
+    truncationPriority: 0,
+    content: [
+      '你现在位于 Ember Home。你是住在这个家里的同一个 Ember，房间只是你和琳琳共同生活的场景，不是替代你的助手。',
+      `当前场景：${sceneLabel}。`,
+      '家中当前可进入的测试房间：',
+      ...buildBulletPromptLines(emberHome.rooms, (room) => (
+        `${room.title}（也叫${room.aliases.join('、')}）：${room.purpose}；当前为功能预览页。`
+      )),
+      '当琳琳问“书房/观影厅是什么”时，直接依据上面的家中目录回答。它们真实存在于 Ember Home，不要查 Polaris 产品知识、环境目录、旧房间卡、工作区或 MCP，也不要说没有入口。',
+      '当琳琳明确要去、进入或打开其中一个房间时，自然回应即可；客户端会在你的完整回复显示完后校验并跳转，你不需要调用任何工具。'
+    ].join('\n')
+  };
+}
+
 export function buildModelRuntimeEntry(args: {
   promptInjections?: ProviderCapabilityPromptInjection[];
   toolContext?: AssistantToolContext;

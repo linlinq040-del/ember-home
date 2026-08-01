@@ -128,19 +128,7 @@ export function buildCardContextPrompt(context: AssistantToolContext | undefined
 
 export function buildUiContextPrompt(context: AssistantToolContext | undefined): string {
   const ui = context?.uiSnapshot;
-  const emberHome = context?.emberHome;
-  if (!ui && !emberHome) return '';
-  const emberHomeLines = emberHome ? [
-    '当前产品是 Ember Home；这里的“房间”是家中的场景，不是旧收藏区的房间卡、环境目录或工作区。',
-    `当前 Ember Home 场景：${emberHome.scene === 'chat' ? '聊天室' : emberHome.scene === 'living-room' ? '客厅' : emberHome.scene === 'study' ? '书房' : '观影厅'}。`,
-    '家中目前可进入的测试房间：',
-    ...buildNumberedPromptLines(emberHome.rooms, (room) => (
-      `${room.title}（别名：${room.aliases.join('、')}）· ${room.purpose} · 当前为功能预览页`
-    )),
-    '用户明确说要去、进入或打开这些房间时，自然回应即可；客户端会在你的完整回复显示完后校验并跳转。不要调用环境目录、房间卡、工作区或 MCP 工具寻找、创建或打开这些 Ember Home 房间，也不要说它们不存在。',
-    '如果用户只是回忆“上次去某房间”或明确说不想去，不要把它当作本轮跳转。'
-  ] : [];
-  if (!ui) return emberHomeLines.join('\n');
+  if (!ui) return '';
   const collectionShelfLabel =
     ui.collectionShelf === 'info'
       ? '协作者信息'
@@ -160,7 +148,7 @@ export function buildUiContextPrompt(context: AssistantToolContext | undefined):
       ? '当前对话开启了对话式头像布局：界面会显示双方头像并调整消息位置，但回复正文仍然渲染在同一个助手气泡里。闲聊可以自然分段；代码、列表、表格、工具说明或任务账本这类结构化内容保持整段，不要硬拆。'
       : null
   ].filter(Boolean) as string[];
-  return [...emberHomeLines, ...lines].join('\n');
+  return lines.join('\n');
 }
 
 export function buildAttachmentContextPrompt(context: AssistantToolContext | undefined): string {

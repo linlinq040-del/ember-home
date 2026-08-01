@@ -6,7 +6,7 @@ import type { ChatMessage, ConversationTaskState } from '../../types/domain';
 import { buildRegexTriggerContext } from '../regexTriggerProcessor';
 import { buildCapabilityEntries } from './requestPromptCapabilities';
 import { buildIdentityEntries } from './requestPromptIdentity';
-import { buildModelRuntimeEntry, buildRuntimeClockEntry, buildWorkRuntimeEntry } from './requestPromptRuntime';
+import { buildEmberHomeContextEntry, buildModelRuntimeEntry, buildRuntimeClockEntry, buildWorkRuntimeEntry } from './requestPromptRuntime';
 import { buildSystemIdentityEntries } from './requestPromptSystemIdentity';
 import type { AssistantToolPromptProtocolMode } from '../tool-protocol/assistantToolProtocolPrompt';
 
@@ -46,6 +46,7 @@ export function buildAssistantPromptParts(params: {
     personaPromptSource,
     templateContext
   });
+  const emberHomeContextEntry = buildEmberHomeContextEntry(toolContext);
   const modelRuntimeEntry = buildModelRuntimeEntry({ promptInjections, toolContext });
   const runtimeClockEntry = includeRuntimeClockContext ? buildRuntimeClockEntry(templateContext) : null;
   const regexTriggerEntry = {
@@ -63,6 +64,7 @@ export function buildAssistantPromptParts(params: {
 
   return [
     ...systemIdentityEntries,
+    ...(emberHomeContextEntry ? [emberHomeContextEntry] : []),
     ...identityEntries,
     ...capabilityEntries,
     ...(runtimeClockEntry ? [runtimeClockEntry] : []),

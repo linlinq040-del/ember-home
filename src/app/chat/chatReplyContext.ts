@@ -40,7 +40,7 @@ import type { RuntimeFeedbackEvent } from '../../engines/runtime-feedback/runtim
 import type { PendingWorkspaceProposalRecord } from '../../engines/workspaceBinding';
 import { resolveConversationTaskMode } from '../../engines/conversationTask';
 import { buildWorkContext } from '../../engines/workContext';
-import { readEmberHomePromptContext } from '../../ember-home/emberHomeRuntimeContext';
+import { isEmberHomeRoomTopic, readEmberHomePromptContext } from '../../ember-home/emberHomeRuntimeContext';
 
 function buildAttachmentSnapshot(messages: ChatMessage[]) {
   const available = messages.flatMap((message) => message.attachments?.filter((attachment) => !attachment.clearedAt) ?? []);
@@ -302,6 +302,20 @@ export function buildReplyToolContext(args: {
     visibleProjects,
     runtimeFeedback
   });
+  const emberHome = readEmberHomePromptContext();
+  const latestUserContent = [...messages].reverse().find(
+    (message) => message.role === 'user' && !message.toolInvocation
+  )?.content ?? '';
+  const isHomeRoomTurn = Boolean(emberHome) && isEmberHomeRoomTopic(latestUserContent);
+  const enabledToolGroups = isHomeRoomTurn
+    ? {
+        ...snapshot.enabledToolGroups,
+        environment: false,
+        room: false,
+        project: false,
+        knowledge: false
+      }
+    : snapshot.enabledToolGroups;
 
   return {
     collaboratorForReply,
@@ -309,7 +323,7 @@ export function buildReplyToolContext(args: {
     modelTier,
     effectiveActiveCardId,
     toolContext: {
-      emberHome: readEmberHomePromptContext(),
+      emberHome,
       activeCard,
       activeCardReferenceMode,
       roomContextMode: resolveRoomContextMode({
@@ -347,6 +361,7 @@ export function buildReplyToolContext(args: {
       runCodeSandboxProfile: getRunCodeSandboxProfile(),
       taskMode: taskToolsEnabled ? resolveConversationTaskMode(snapshot.currentTask) : 'seed',
       ...themeToolContext.toolContext,
+      enabledToolGroups,
       runtimeFeedback,
       toolEnforcementMode: (
         shouldForceRoomAction ? 'force' : themeToolContext.toolContext.toolEnforcementMode

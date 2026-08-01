@@ -13,6 +13,8 @@ export type EmberHomePromptContext = {
 
 let activeScene: EmberHomeRuntimeScene | null = null;
 
+const EMBER_HOME_ROOM_TERMS = ['书房', '阅读室', '共读室', '观影厅', '影院', '电影院', '放映厅'];
+
 export function setEmberHomeRuntimeScene(scene: EmberHomeRuntimeScene | null) {
   activeScene = scene;
 }
@@ -38,4 +40,8 @@ export function readEmberHomePromptContext(): EmberHomePromptContext | null {
       }
     ]
   };
+}
+
+export function isEmberHomeRoomTopic(content: string) {
+  return EMBER_HOME_ROOM_TERMS.some((term) => content.includes(term));
 }

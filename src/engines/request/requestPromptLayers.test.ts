@@ -2,6 +2,50 @@ import { describe, expect, it } from 'vitest';
 import { buildAssistantPromptParts } from './requestPromptLayers';
 
 describe('buildAssistantPromptParts', () => {
+  it('keeps Ember Home room knowledge in the core identity layer', () => {
+    const parts = buildAssistantPromptParts({
+      personaPrompt: '你是测试。',
+      personaPromptSource: 'custom',
+      templateContext: {
+        cur_date: '2026-08-02',
+        cur_time: '01:40',
+        cur_datetime: '2026-08-02 01:40:00',
+        timezone: 'Asia/Shanghai',
+        model_id: 'test-model',
+        model_name: 'test-model',
+        locale: 'zh-CN',
+        system_version: 'test',
+        device_info: 'test',
+        battery_level: '100%',
+        nickname: '琳琳',
+        user_name: '琳琳',
+        assistant_name: 'Ember'
+      },
+      messages: [],
+      toolContext: {
+        activeCard: null,
+        visibleCards: [],
+        emberHome: {
+          scene: 'chat',
+          rooms: [{
+            id: 'study',
+            title: '书房',
+            aliases: ['阅读室'],
+            purpose: '一起阅读和批注',
+            availability: 'preview'
+          }]
+        }
+      }
+    });
+
+    const emberHome = parts.find((part) => part.name === 'ember_home_context');
+    expect(emberHome?.enabled).toBe(true);
+    expect(emberHome?.layer).toBe('identity');
+    expect(emberHome?.truncationPriority).toBe(0);
+    expect(emberHome?.content).toContain('书房（也叫阅读室）：一起阅读和批注');
+    expect(emberHome?.content).toContain('不要查 Polaris 产品知识');
+  });
+
   it('prepends system identity before persona and capability layers', () => {
     const parts = buildAssistantPromptParts({
       personaPrompt: '你是一个温柔的协作者。',
