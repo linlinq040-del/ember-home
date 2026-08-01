@@ -38,8 +38,11 @@ function sentenceUnits(content: string, includeIncompleteTail: boolean) {
  * The persisted message remains intact so copy, speech, memory and future
  * model context always see the original reply.
  */
-export function canRenderAssistantSentenceBubbles(content: string) {
-  return Boolean(content.trim()) && !MARKDOWN_BLOCK.test(content);
+export function canRenderAssistantSentenceBubbles(
+  content: string,
+  options: { isError?: boolean } = {}
+) {
+  return !options.isError && Boolean(content.trim()) && !MARKDOWN_BLOCK.test(content);
 }
 
 export function splitAssistantSentenceBubbles(

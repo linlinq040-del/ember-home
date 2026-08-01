@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { splitAssistantSentenceBubbles } from './assistantSentenceBubbles';
+import { canRenderAssistantSentenceBubbles, splitAssistantSentenceBubbles } from './assistantSentenceBubbles';
 
 describe('splitAssistantSentenceBubbles', () => {
   it('renders every conversational sentence as its own bubble', () => {
@@ -34,5 +34,12 @@ describe('splitAssistantSentenceBubbles', () => {
       '第一句说完了。'
     ]);
     expect(splitAssistantSentenceBubbles('第二句还没说完', { includeIncompleteTail: false })).toEqual([]);
+  });
+
+  it('keeps provider and API key failures as one complete message', () => {
+    expect(canRenderAssistantSentenceBubbles(
+      'API Key 无效。请检查供应商设置。',
+      { isError: true }
+    )).toBe(false);
   });
 });

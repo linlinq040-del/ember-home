@@ -108,6 +108,18 @@
 .bubble.assistant > .message-rich-text > * {
   max-width: 100%;
 }
+.message-time-corner {
+  display: block;
+  align-self: flex-end;
+  margin: 5px 0 -2px 12px;
+  color: color-mix(in srgb, currentColor 58%, transparent);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+}
 .user-bubble-action-menu {
   display: inline-flex;
   align-items: stretch;

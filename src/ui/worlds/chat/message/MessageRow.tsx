@@ -23,6 +23,8 @@ import { MessageGeneratedImages } from './MessageGeneratedImages';
 import { MessageToolEvent } from './MessageToolEvent';
 import { isProjectedCodeToolName } from './projectedCodeTools';
 import { buildAssistantSpeechText } from './messageSpeechText';
+import { formatMessageTimestamp } from './messageTimestamp';
+import { usePacedSentenceBubbleCount } from './usePacedSentenceBubbles';
 import {
   buildVisibleToolProductCardMessageIds,
   nextToolProductCardActivationBlockedUntil,
@@ -321,12 +323,21 @@ function MessageRowComponent({
     && !resolvedCardReference
     && toolMessages.length === 0
     && !hasProjectedCodeToolEvent
-    && canRenderAssistantSentenceBubbles(message.content);
+    && canRenderAssistantSentenceBubbles(message.content, { isError: message.requestRole === 'system' });
   const sentenceBubbleContents = canUseSentenceBubbles
     ? splitAssistantSentenceBubbles(message.content, { includeIncompleteTail: !isStreamingLike })
     : [];
+  const visibleSentenceBubbleCount = usePacedSentenceBubbleCount({
+    enabled: canUseSentenceBubbles,
+    isStreaming: isStreamingLike,
+    targetCount: sentenceBubbleContents.length
+  });
+  const visibleSentenceBubbleContents = sentenceBubbleContents.slice(0, visibleSentenceBubbleCount);
+  const showSentenceTyping = canUseSentenceBubbles
+    && (isStreamingLike || visibleSentenceBubbleCount < sentenceBubbleContents.length);
   const useSentenceConversationLayout = canUseSentenceBubbles
-    && (isStreamingLike || sentenceBubbleContents.length > 1);
+    && (showSentenceTyping || sentenceBubbleContents.length > 1);
+  const messageTimestamp = formatMessageTimestamp(message.timestamp);
   const messageBubble = (
     <div
       ref={bubbleFrameRef}
@@ -395,6 +406,9 @@ function MessageRowComponent({
             )}
           </>
         )}
+        {!state.editing && messageTimestamp && (!isAssistantReply || !isStreamingLike) ? (
+          <span className="message-time-corner">{messageTimestamp}</span>
+        ) : null}
       </div>
       {isUserMessage && !state.editing && state.canEdit && userActionMenuOpen ? (
         <div className="user-bubble-action-menu" role="menu" aria-label={t('chat.messageActions.userMenuAria')}>
@@ -438,7 +452,7 @@ function MessageRowComponent({
         <div className={`message-turn assistant ${showChatAvatars ? 'with-avatar' : ''}`}>
           {useSentenceConversationLayout ? (
             <div className="assistant-sentence-turn-list">
-              {sentenceBubbleContents.map((content, index) => (
+              {visibleSentenceBubbleContents.map((content, index) => (
                 <div className="message-turn-body assistant sentence-bubble-turn" key={`${message.id}:sentence:${index}`}>
                   <div className="message-avatar-slot assistant sentence-bubble-avatar" style={{ width: assistantAvatarPx, minWidth: assistantAvatarPx }}>
                     <PersonaAvatar
@@ -478,13 +492,14 @@ function MessageRowComponent({
                           onToggleCodeExpanded={() => actions.toggleCodeExpanded(message.id)}
                           onApplyCustomCss={actions.applyCustomCss}
                         />
+                        {messageTimestamp ? <span className="message-time-corner">{messageTimestamp}</span> : null}
                       </div>
                     </div>
-                    {!isStreamingLike && index === sentenceBubbleContents.length - 1 ? messageActions : null}
+                    {!showSentenceTyping && index === visibleSentenceBubbleContents.length - 1 ? messageActions : null}
                   </div>
                 </div>
               ))}
-              {isStreamingLike ? (
+              {showSentenceTyping ? (
                 <div className="message-turn-body assistant sentence-bubble-turn sentence-bubble-pending" key={`${message.id}:typing`}>
                   <div className="message-avatar-slot assistant sentence-bubble-avatar" style={{ width: assistantAvatarPx, minWidth: assistantAvatarPx }}>
                     <PersonaAvatar
@@ -498,7 +513,7 @@ function MessageRowComponent({
                     />
                   </div>
                   <div className="message-turn-stack assistant">
-                    {sentenceBubbleContents.length === 0 && showAssistantChatIdentity ? (
+                    {visibleSentenceBubbleContents.length === 0 && showAssistantChatIdentity ? (
                       <MessageMeta
                         message={message}
                         fallbackAssistantName={fallbackAssistantName}

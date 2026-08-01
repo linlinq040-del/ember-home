@@ -228,7 +228,7 @@ html.ember-living-room-active #root {
   max-width: 100%;
   overflow: hidden;
   color: #8b7480;
-  font-size: 11px;
+  font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -240,13 +240,13 @@ html.ember-living-room-active #root {
 
 .ember-preview-weather-live b {
   margin-top: 8%;
-  font-size: clamp(12px, 1.5vw, 18px);
+  font-size: clamp(14px, 1.6vw, 19px);
 }
 
 .ember-preview-weather-live small {
   margin-top: 2%;
   color: #766c72;
-  font-size: clamp(8px, 1vw, 12px);
+  font-size: clamp(10px, 1.1vw, 13px);
 }
 
 .ember-preview-weather-forecast {
@@ -272,13 +272,13 @@ html.ember-living-room-active #root {
 .ember-preview-weather-forecast small {
   grid-column: 1 / -1;
   justify-self: center;
-  font-size: clamp(7px, 0.9vw, 11px);
+  font-size: clamp(9px, 0.95vw, 12px);
 }
 
 .ember-preview-weather-forecast b {
   grid-column: 2;
   justify-self: center;
-  font: 400 clamp(16px, 2.1vw, 25px)/1 Georgia, "Songti SC", serif;
+  font: 400 clamp(18px, 2.2vw, 26px)/1 Georgia, "Songti SC", serif;
 }
 
 .ember-preview-weather-icon {
@@ -309,7 +309,7 @@ html.ember-living-room-active #root {
   bottom: 3.5%;
   left: 11%;
   color: #6d626a;
-  font-size: clamp(7px, 0.9vw, 11px);
+  font-size: clamp(9px, 0.95vw, 12px);
 }
 
 .ember-preview-weather-note {
@@ -318,7 +318,8 @@ html.ember-living-room-active #root {
   right: 8%;
   bottom: 10%;
   color: rgba(105, 83, 99, 0.75);
-  font: italic clamp(10px, 1.5vw, 18px)/1.5 "KaiTi", "STKaiti", cursive;
+  max-width: 31%;
+  font: italic clamp(12px, 1.55vw, 18px)/1.45 "KaiTi", "STKaiti", cursive;
   transform: rotate(-4deg);
 }
 
