@@ -36,14 +36,33 @@ export function LivingRoom({ onOpenChat }: LivingRoomProps) {
     const body = document.body;
     const themeColorMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
     const previousThemeColor = themeColorMeta?.getAttribute('content') ?? null;
+    const viewport = window.visualViewport;
+
+    const syncBottomViewportGap = () => {
+      const viewportHeight = viewport?.height ?? window.innerHeight;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const measuredGap = Math.max(0, window.screen.height - viewportHeight - viewportTop);
+      const boundedGap = Math.min(64, Math.round(measuredGap));
+      root.style.setProperty('--ember-home-viewport-bottom-gap', `${boundedGap}px`);
+    };
 
     root.classList.add('ember-living-room-active');
     body.classList.add('ember-living-room-active');
     themeColorMeta?.setAttribute('content', '#faf7f5');
+    syncBottomViewportGap();
+    window.addEventListener('resize', syncBottomViewportGap);
+    window.addEventListener('orientationchange', syncBottomViewportGap);
+    viewport?.addEventListener('resize', syncBottomViewportGap);
+    viewport?.addEventListener('scroll', syncBottomViewportGap);
 
     return () => {
+      window.removeEventListener('resize', syncBottomViewportGap);
+      window.removeEventListener('orientationchange', syncBottomViewportGap);
+      viewport?.removeEventListener('resize', syncBottomViewportGap);
+      viewport?.removeEventListener('scroll', syncBottomViewportGap);
       root.classList.remove('ember-living-room-active');
       body.classList.remove('ember-living-room-active');
+      root.style.removeProperty('--ember-home-viewport-bottom-gap');
       if (themeColorMeta && previousThemeColor !== null) {
         themeColorMeta.setAttribute('content', previousThemeColor);
       }
