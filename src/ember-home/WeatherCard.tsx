@@ -123,18 +123,24 @@ export function WeatherCard() {
     );
   }
 
+  const displayLocation = snapshot?.locationLabel.split(' · ')[0] ?? '选择城市';
+
   return (
     <article className="ember-preview-weather-card">
-      <img src="/assets/weather-board-clean.png" alt="柔和云层与阳光背景" />
-      <div className="ember-preview-weather-live" aria-live="polite">
-        <span className="ember-preview-weather-location">⌖ {snapshot?.locationLabel ?? '天气尚未接入'}</span>
+      <img src="/assets/weather-board-dynamic.png" alt="柔和云层与阳光天气卡片" />
+      <button className="ember-preview-weather-live" type="button" onClick={() => setPanelOpen((open) => !open)} aria-label="设置天气" aria-live="polite">
+        <span className="ember-preview-weather-location">{loading ? '正在更新' : displayLocation}</span>
         <strong>{snapshot ? `${snapshot.currentTemperature}°` : '--°'}</strong>
-        <b>{snapshot?.condition ?? '点击下方开始'}</b>
-        <small>{snapshot ? `最高 ${snapshot.highTemperature}° · 最低 ${snapshot.lowTemperature}°` : '只在你点击时请求一次定位'}</small>
-      </div>
-      <button className="ember-preview-weather-sync" type="button" onClick={() => setPanelOpen((open) => !open)}>
-        <i /> {loading ? '正在更新天气…' : snapshot ? rainCopy(snapshot.precipitationProbability) : '接入真实天气'}
+        <b>{snapshot?.condition ?? '等待天气数据'}</b>
+        <small>{snapshot ? `最高 ${snapshot.highTemperature}° · 最低 ${snapshot.lowTemperature}°` : '点击这里接入天气'}</small>
       </button>
+      <div className="ember-preview-weather-forecast" aria-label="今日分时天气">
+        <span><small>现在</small><b>{snapshot ? `${snapshot.currentTemperature}°` : '--°'}</b></span>
+        <span><small>下午</small><b>{snapshot ? `${snapshot.highTemperature}°` : '--°'}</b></span>
+        <span><small>今晚</small><b>{snapshot ? `${snapshot.lowTemperature}°` : '--°'}</b></span>
+      </div>
+      <span className="ember-preview-weather-rain">{snapshot ? rainCopy(snapshot.precipitationProbability) : '点击左上方接入真实天气'}</span>
+      <span className="ember-preview-weather-note" aria-hidden="true">风有一点凉，<br />回来时我在家等你。♡</span>
 
       {panelOpen ? (
         <div className="ember-preview-weather-panel">
