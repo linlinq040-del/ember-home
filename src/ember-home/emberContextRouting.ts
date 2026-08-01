@@ -3,11 +3,9 @@ import type { Persona } from '../types/domain/persona';
 export type EmberHomeScene = 'living-room' | 'chat' | 'music' | 'study';
 
 export type EmberIdentitySource =
-  | 'conversation'
+  | 'home'
   | 'ember'
   | 'legacy-default'
-  | 'active'
-  | 'first'
   | 'none';
 
 export interface EmberIdentityRoute {
@@ -18,8 +16,7 @@ export interface EmberIdentityRoute {
 
 export interface ResolveEmberIdentityRouteInput {
   personas: readonly Persona[];
-  conversationCollaboratorId?: string | null;
-  activeCollaboratorId?: string | null;
+  homeCollaboratorId?: string | null;
 }
 
 export interface ResolveEmberMemoryRouteInput {
@@ -45,27 +42,31 @@ export interface EmberChatEntryContext {
   memory: EmberMemoryRoute;
 }
 
+export interface EmberConversationCandidate {
+  id: string;
+  collaboratorId: string | null;
+}
+
 function findPersonaById(personas: readonly Persona[], id?: string | null) {
   if (!id) return null;
   return personas.find((persona) => persona.id === id) ?? null;
 }
 
 /**
- * Resolves Ember onto the existing collaborator model without rewriting or
- * renaming persisted personas. An open conversation always keeps its current
- * collaborator so existing chats remain intact.
+ * Resolves the one collaborator who lives in Ember Home. Conversation state
+ * never chooses or replaces this identity; rooms and chats are only contexts
+ * for the same Ember.
  */
 export function resolveEmberIdentityRoute({
   personas,
-  conversationCollaboratorId,
-  activeCollaboratorId
+  homeCollaboratorId
 }: ResolveEmberIdentityRouteInput): EmberIdentityRoute {
-  const conversationPersona = findPersonaById(personas, conversationCollaboratorId);
-  if (conversationPersona) {
+  const homePersona = findPersonaById(personas, homeCollaboratorId);
+  if (homePersona) {
     return {
-      collaboratorId: conversationPersona.id,
+      collaboratorId: homePersona.id,
       displayName: 'Ember',
-      source: 'conversation'
+      source: 'home'
     };
   }
 
@@ -87,20 +88,34 @@ export function resolveEmberIdentityRoute({
     };
   }
 
-  const activePersona = findPersonaById(personas, activeCollaboratorId);
-  if (activePersona) {
-    return {
-      collaboratorId: activePersona.id,
-      displayName: 'Ember',
-      source: 'active'
-    };
+  return {
+    collaboratorId: null,
+    displayName: 'Ember',
+    source: 'none'
+  };
+}
+
+export function resolveEmberConversationId({
+  conversations,
+  activeConversationId,
+  emberCollaboratorId
+}: {
+  conversations: readonly EmberConversationCandidate[];
+  activeConversationId?: string | null;
+  emberCollaboratorId?: string | null;
+}) {
+  if (!emberCollaboratorId) return null;
+
+  const activeConversation = conversations.find(
+    (conversation) => conversation.id === activeConversationId
+  );
+  if (activeConversation?.collaboratorId === emberCollaboratorId) {
+    return activeConversation.id;
   }
 
-  return {
-    collaboratorId: personas[0]?.id ?? null,
-    displayName: 'Ember',
-    source: personas.length > 0 ? 'first' : 'none'
-  };
+  return conversations.find(
+    (conversation) => conversation.collaboratorId === emberCollaboratorId
+  )?.id ?? null;
 }
 
 /**
@@ -130,15 +145,13 @@ export function resolveEmberMemoryRoute({
  */
 export function resolveEmberChatEntryContext({
   personas,
-  conversationCollaboratorId,
-  activeCollaboratorId,
+  homeCollaboratorId,
   longTermMemoryRequested = false,
   ombreBrainAvailable = false
 }: ResolveEmberChatEntryContextInput): EmberChatEntryContext {
   const identity = resolveEmberIdentityRoute({
     personas,
-    conversationCollaboratorId,
-    activeCollaboratorId
+    homeCollaboratorId
   });
   const persona = personas.find((candidate) => candidate.id === identity.collaboratorId) ?? null;
 

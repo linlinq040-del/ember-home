@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createPersonaTemplate } from '../config/persona/personaBuilder';
 import {
   resolveEmberChatEntryContext,
+  resolveEmberConversationId,
   resolveEmberIdentityRoute,
   resolveEmberMemoryRoute
 } from './emberContextRouting';
@@ -18,17 +19,16 @@ const createPersona = (
 });
 
 describe('resolveEmberIdentityRoute', () => {
-  it('preserves the collaborator already attached to an open conversation', () => {
-    const personas = [createPersona('ember', 'Ember'), createPersona('test', '测试')];
+  it('keeps the one collaborator explicitly bound to Ember Home', () => {
+    const personas = [createPersona('home-ember', '我的 Ember'), createPersona('other', '其他角色')];
 
     expect(resolveEmberIdentityRoute({
       personas,
-      conversationCollaboratorId: 'test',
-      activeCollaboratorId: 'ember'
+      homeCollaboratorId: 'home-ember'
     })).toEqual({
-      collaboratorId: 'test',
+      collaboratorId: 'home-ember',
       displayName: 'Ember',
-      source: 'conversation'
+      source: 'home'
     });
   });
 
@@ -47,6 +47,16 @@ describe('resolveEmberIdentityRoute', () => {
       source: 'legacy-default'
     });
     expect(JSON.stringify(personas)).toBe(before);
+  });
+
+  it('does not turn an unrelated active persona into Ember', () => {
+    const personas = [createPersona('other', '其他角色')];
+
+    expect(resolveEmberIdentityRoute({ personas })).toEqual({
+      collaboratorId: null,
+      displayName: 'Ember',
+      source: 'none'
+    });
   });
 });
 
@@ -82,18 +92,16 @@ describe('resolveEmberMemoryRoute', () => {
 });
 
 describe('resolveEmberChatEntryContext', () => {
-  it('keeps an existing conversation collaborator and enables its chat memory', () => {
-    const personas = [createPersona('ember', 'Ember'), createPersona('existing', '测试')];
+  it('uses only the home Ember identity and enables its chat memory', () => {
+    const personas = [createPersona('ember', 'Ember'), createPersona('other', '其他角色')];
 
     expect(resolveEmberChatEntryContext({
-      personas,
-      conversationCollaboratorId: 'existing',
-      activeCollaboratorId: 'ember'
+      personas
     })).toEqual({
       identity: {
-        collaboratorId: 'existing',
+        collaboratorId: 'ember',
         displayName: 'Ember',
-        source: 'conversation'
+        source: 'ember'
       },
       memory: {
         includeCurrentConversation: true,
@@ -106,10 +114,41 @@ describe('resolveEmberChatEntryContext', () => {
   it('selects an existing Ember persona without creating or renaming data', () => {
     const personas = [createPersona('legacy', '旧角色'), createPersona('ember', 'EMBER', false)];
     const before = JSON.stringify(personas);
-    const result = resolveEmberChatEntryContext({ personas, activeCollaboratorId: 'legacy' });
+    const result = resolveEmberChatEntryContext({ personas });
 
     expect(result.identity).toMatchObject({ collaboratorId: 'ember', source: 'ember' });
     expect(result.memory.includeCrossConversationRecall).toBe(false);
     expect(JSON.stringify(personas)).toBe(before);
+  });
+});
+
+describe('resolveEmberConversationId', () => {
+  const conversations = [
+    { id: 'other-chat', collaboratorId: 'other' },
+    { id: 'ember-chat', collaboratorId: 'ember' }
+  ];
+
+  it('never treats another collaborator conversation as the home chat', () => {
+    expect(resolveEmberConversationId({
+      conversations,
+      activeConversationId: 'other-chat',
+      emberCollaboratorId: 'ember'
+    })).toBe('ember-chat');
+  });
+
+  it('keeps the current conversation when it already belongs to Ember', () => {
+    expect(resolveEmberConversationId({
+      conversations,
+      activeConversationId: 'ember-chat',
+      emberCollaboratorId: 'ember'
+    })).toBe('ember-chat');
+  });
+
+  it('requests a fresh home chat when Ember has no conversation yet', () => {
+    expect(resolveEmberConversationId({
+      conversations,
+      activeConversationId: 'other-chat',
+      emberCollaboratorId: 'new-ember'
+    })).toBeNull();
   });
 });
