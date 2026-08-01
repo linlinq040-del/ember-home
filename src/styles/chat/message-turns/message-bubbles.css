@@ -120,6 +120,11 @@
   text-align: right;
   white-space: nowrap;
 }
+.bubble.user .message-time-corner {
+  margin-right: 10px;
+  margin-left: 0;
+  text-align: left;
+}
 .user-bubble-action-menu {
   display: inline-flex;
   align-items: stretch;
