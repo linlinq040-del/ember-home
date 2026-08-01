@@ -1,344 +1,658 @@
 .ember-living-room {
-  --ember-ink: #2d2926;
-  --ember-muted: #786e66;
-  --ember-line: rgba(91, 72, 58, 0.12);
-  --ember-paper: rgba(255, 252, 247, 0.84);
+  --ember-preview-ink: #302b33;
+  --ember-preview-muted: #817780;
+  --ember-preview-card: rgba(255, 253, 250, 0.88);
+  --ember-preview-line: rgba(70, 59, 68, 0.1);
   width: 100%;
   height: 100dvh;
   min-height: 0;
+  padding: 30px 18px;
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-y: contain;
-  -webkit-overflow-scrolling: touch;
-  color: var(--ember-ink);
+  color: var(--ember-preview-ink);
   background:
-    radial-gradient(circle at 8% 4%, rgba(255, 210, 172, 0.44), transparent 28rem),
-    radial-gradient(circle at 92% 32%, rgba(209, 224, 199, 0.5), transparent 30rem),
-    linear-gradient(145deg, #fffaf4 0%, #f7f0e7 52%, #f3ede6 100%);
-  font-family: Inter, ui-rounded, "SF Pro Rounded", "PingFang SC", "Microsoft YaHei", sans-serif;
+    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.96), transparent 32rem),
+    linear-gradient(145deg, #eee8e4, #ddd5d1);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-overflow-scrolling: touch;
 }
 
-.ember-living-room__glow {
+.ember-living-room,
+.ember-living-room * {
+  box-sizing: border-box;
+}
+
+.ember-living-room button {
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ember-preview-ambient {
   position: fixed;
-  width: 18rem;
-  height: 18rem;
   border-radius: 50%;
+  filter: blur(18px);
+  opacity: 0.45;
   pointer-events: none;
-  filter: blur(10px);
-  opacity: 0.6;
 }
 
-.ember-living-room__glow--top {
-  top: -10rem;
-  right: 8%;
-  background: rgba(237, 166, 116, 0.22);
+.ember-preview-ambient--one {
+  width: 480px;
+  height: 480px;
+  left: -220px;
+  top: 30%;
+  background: rgba(221, 200, 218, 0.72);
 }
 
-.ember-living-room__glow--bottom {
-  bottom: -11rem;
-  left: -5rem;
-  background: rgba(148, 177, 137, 0.25);
+.ember-preview-ambient--two {
+  width: 420px;
+  height: 420px;
+  right: -160px;
+  top: 5%;
+  background: rgba(230, 206, 185, 0.68);
 }
 
-.ember-living-room__header,
-.ember-living-room__content {
-  width: min(1120px, calc(100% - 40px));
-  margin-inline: auto;
+.ember-preview-frame {
+  width: min(1160px, 100%);
+  min-height: calc(100dvh - 60px);
+  margin: 0 auto;
   position: relative;
   z-index: 1;
-}
-
-.ember-living-room__header {
-  min-height: 88px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--ember-line);
-}
-
-.ember-home-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  color: inherit;
-  text-decoration: none;
-}
-
-.ember-home-brand__mark {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px 14px 16px 16px;
-  background: linear-gradient(145deg, #d66d3b, #f2a65e);
-  box-shadow: 0 10px 24px rgba(171, 84, 42, 0.2);
-}
-
-.ember-home-brand__mark span {
-  width: 12px;
-  height: 20px;
-  border-radius: 70% 30% 65% 35%;
-  background: #fff7df;
-  transform: rotate(8deg);
-}
-
-.ember-home-brand strong,
-.ember-home-brand small {
-  display: block;
-}
-
-.ember-home-brand strong {
-  font-size: 0.98rem;
-  letter-spacing: 0.02em;
-}
-
-.ember-home-brand small {
-  margin-top: 2px;
-  color: var(--ember-muted);
-  font-size: 0.72rem;
-}
-
-.ember-living-room__status {
-  padding: 7px 11px;
-  border: 1px solid var(--ember-line);
-  border-radius: 999px;
-  color: var(--ember-muted);
-  background: rgba(255, 255, 255, 0.42);
-  font-size: 0.72rem;
-}
-
-.ember-living-room__status i {
-  width: 6px;
-  height: 6px;
-  display: inline-block;
-  margin-right: 7px;
-  border-radius: 50%;
-  background: #6f9b68;
-  box-shadow: 0 0 0 4px rgba(111, 155, 104, 0.12);
-}
-
-.ember-living-room__content {
-  padding: 72px 0 64px;
-}
-
-.ember-living-room__intro {
-  max-width: 760px;
-}
-
-.ember-living-room__eyebrow,
-.ember-room-card__eyebrow,
-.ember-note__body > span,
-.ember-summary-card > span {
-  margin: 0 0 10px;
-  color: #a4512e;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.ember-living-room__intro h1 {
-  margin: 0;
-  font-family: ui-serif, "Songti SC", "STSong", serif;
-  font-size: clamp(2.5rem, 7vw, 5.5rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 0.98;
-}
-
-.ember-living-room__intro > p:last-child {
-  margin: 20px 0 0;
-  color: var(--ember-muted);
-  font-size: clamp(1rem, 2vw, 1.16rem);
-}
-
-.ember-note {
-  margin-top: 48px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 18px;
-  padding: 22px;
-  border: 1px solid rgba(164, 81, 46, 0.16);
-  border-radius: 24px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 80% 10%, rgba(236, 159, 102, 0.26), transparent 18rem),
-    linear-gradient(125deg, rgba(255, 249, 241, 0.98), rgba(249, 237, 224, 0.88));
-  box-shadow: 0 24px 70px rgba(79, 53, 36, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 38px;
+  background: rgba(248, 245, 242, 0.82);
+  box-shadow: 0 32px 80px rgba(66, 51, 61, 0.17), inset 0 1px 0 white;
+  backdrop-filter: blur(28px);
 }
 
-.ember-note__avatar {
-  width: 48px;
-  height: 48px;
+.ember-preview-topbar {
+  height: 94px;
+  padding: 20px 38px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--ember-preview-line);
+  background: rgba(248, 245, 242, 0.84);
+  backdrop-filter: blur(20px);
+}
+
+.ember-preview-brand-mark,
+.ember-preview-avatar,
+.ember-preview-icon-button {
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 16px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  color: #fffaf0;
-  background: #473a32;
-  font-family: ui-serif, Georgia, serif;
-  font-size: 1.1rem;
 }
 
-.ember-note__body p {
-  margin: 4px 0 0;
-  font-size: 1rem;
-  line-height: 1.6;
+.ember-preview-brand-mark {
+  color: white;
+  background: linear-gradient(145deg, #8b6f8b, #60495f);
+  box-shadow: 0 8px 18px rgba(91, 65, 88, 0.2);
+  font: 23px Georgia, serif;
 }
 
-.ember-note button,
-.ember-room-card button {
-  min-height: 42px;
-  padding: 0 18px;
-  border: 0;
-  border-radius: 999px;
-  color: #fffaf4;
-  background: #3d332d;
-  font: inherit;
-  font-size: 0.88rem;
+.ember-preview-icon-button {
+  border: 1px solid var(--ember-preview-line);
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 34px;
+}
+
+.ember-preview-settings {
+  margin-left: auto;
+  color: #786978;
+  font-size: 17px;
+}
+
+.ember-preview-avatar {
+  position: relative;
+  overflow: visible;
+  border: 1px solid rgba(94, 72, 82, 0.1);
+  color: #765f68;
+  background: #ead9d9;
+  font-size: 13px;
   font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 9px 20px rgba(61, 51, 45, 0.16);
 }
 
-.ember-note button:hover,
-.ember-room-card button:hover {
-  background: #a4512e;
-}
-
-.ember-room-section {
-  margin-top: 70px;
-}
-
-.ember-room-section__heading {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 22px;
-}
-
-.ember-room-section__heading h2,
-.ember-summary-card h2 {
-  margin: 0;
-  font-family: ui-serif, "Songti SC", "STSong", serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 500;
-}
-
-.ember-room-section__heading > span {
-  color: var(--ember-muted);
-  font-size: 0.82rem;
-}
-
-.ember-room-grid {
+.ember-preview-avatar i {
+  width: 17px;
+  height: 17px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  place-items: center;
+  position: absolute;
+  right: -5px;
+  bottom: -4px;
+  border: 2px solid #f7f3ef;
+  border-radius: 50%;
+  color: white;
+  background: #755c72;
+  font-size: 11px;
+  font-style: normal;
 }
 
-.ember-room-card,
-.ember-summary-card {
-  border: 1px solid var(--ember-line);
-  background: var(--ember-paper);
-  box-shadow: 0 18px 42px rgba(71, 52, 40, 0.06);
-}
-
-.ember-room-card {
-  min-height: 260px;
-  padding: 28px;
+.ember-preview-topbar-title {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: 3px;
+}
+
+.ember-preview-topbar-title span {
+  color: var(--ember-preview-muted);
+  font-size: 12px;
+}
+
+.ember-preview-topbar-title strong {
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 23px;
+  letter-spacing: -0.02em;
+}
+
+.ember-preview-page-area {
+  padding: 28px 38px 118px;
+}
+
+.ember-preview-eyebrow {
+  display: block;
+  color: #8a7c85;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.ember-preview-hero-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 18px;
+}
+
+.ember-preview-weather-card,
+.ember-preview-together-card,
+.ember-preview-note,
+.ember-preview-pet-card,
+.ember-preview-schedule-card,
+.ember-preview-health-glance {
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  background: var(--ember-preview-card);
+  box-shadow: 0 12px 30px rgba(74, 57, 68, 0.07);
+}
+
+.ember-preview-weather-card {
+  min-height: 246px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px;
+  text-align: left;
+}
+
+.ember-preview-weather-card img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+
+.ember-preview-weather-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 62%, rgba(255, 252, 248, 0.82));
+  pointer-events: none;
+}
+
+.ember-preview-weather-sync {
+  padding: 7px 10px;
+  position: absolute;
+  z-index: 2;
+  left: 22px;
+  bottom: 14px;
+  border-radius: 12px;
+  color: #746d73;
+  background: rgba(255, 255, 255, 0.64);
+  backdrop-filter: blur(12px);
+  font-size: 9px;
+}
+
+.ember-preview-weather-sync i {
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  display: inline-block;
+  border-radius: 50%;
+  background: #b19a8b;
+}
+
+.ember-preview-together-card {
+  padding: 27px;
+  border-radius: 30px;
+  background: radial-gradient(circle at 90% 0, rgba(226, 194, 201, 0.7), transparent 11rem), rgba(255, 249, 245, 0.9);
+}
+
+.ember-preview-together-card > strong {
+  display: block;
+  margin: 36px 0 30px;
+  font: 500 23px Georgia, "Songti SC", serif;
+}
+
+.ember-preview-together-card em {
+  margin: 0 5px;
+  color: #9a6876;
+  font-size: 40px;
+  font-style: normal;
+}
+
+.ember-preview-anniversary-row {
+  padding-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--ember-preview-line);
+  color: var(--ember-preview-muted);
+  font-size: 12px;
+}
+
+.ember-preview-anniversary-row b {
+  color: #8e6571;
+}
+
+.ember-preview-note {
+  margin-top: 18px;
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
   border-radius: 26px;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  background: linear-gradient(110deg, rgba(237, 229, 232, 0.95), rgba(255, 251, 247, 0.92));
 }
 
-.ember-room-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 24px 54px rgba(71, 52, 40, 0.1);
+.ember-preview-note p {
+  margin: 7px 0 5px;
+  font: 17px/1.75 Georgia, "Songti SC", serif;
 }
 
-.ember-room-card__icon {
-  width: 42px;
-  height: 42px;
+.ember-preview-note div > button,
+.ember-preview-section-heading button {
+  padding: 0;
+  border: 0;
+  color: #846579;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ember-preview-ember-mini {
+  width: 66px;
+  height: 66px;
+  flex: 0 0 auto;
+  position: relative;
+  border: 0;
+  border-radius: 24px;
+  background: #51474e;
+  box-shadow: inset 0 -9px 16px rgba(0, 0, 0, 0.14), 0 10px 24px rgba(69, 54, 66, 0.15);
+}
+
+.ember-preview-ear {
+  width: 25px;
+  height: 28px;
+  position: absolute;
+  top: -8px;
+  border-radius: 5px 18px 4px 16px;
+  background: #51474e;
+  transform: rotate(11deg);
+}
+
+.ember-preview-ear--left { left: 6px; }
+.ember-preview-ear--right { right: 6px; transform: scaleX(-1) rotate(11deg); }
+
+.ember-preview-eye {
+  width: 6px;
+  height: 8px;
+  position: absolute;
+  top: 31px;
+  border-radius: 50%;
+  background: #f3ded1;
+}
+
+.ember-preview-eye--left { left: 21px; }
+.ember-preview-eye--right { right: 21px; }
+
+.ember-preview-lower-grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 18px;
+}
+
+.ember-preview-pet-card,
+.ember-preview-schedule-card {
+  padding: 23px;
+  border-radius: 28px;
+}
+
+.ember-preview-section-heading {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ember-preview-section-heading h2 {
+  margin: 5px 0 0;
+  font: 500 21px Georgia, "Songti SC", serif;
+}
+
+.ember-preview-pet-stage {
+  width: 100%;
+  min-height: 180px;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  border-radius: 22px;
+  background: linear-gradient(155deg, #fff5df, #f1e8ec);
+}
+
+.ember-preview-tuantuan {
+  width: 150px;
+  height: 146px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 10px 9px rgba(120, 89, 41, 0.14));
+  animation: ember-preview-breathe 2.5s ease-in-out infinite;
+}
+
+@keyframes ember-preview-breathe {
+  50% { transform: translateY(-4px) scale(1.025); }
+}
+
+.ember-preview-pet-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+}
+
+.ember-preview-pet-copy strong { font: 500 17px Georgia, "Songti SC", serif; }
+.ember-preview-pet-copy small { color: var(--ember-preview-muted); font-size: 11px; }
+
+.ember-preview-heart {
+  position: absolute;
+  left: 40%;
+  top: 17px;
+  z-index: 5;
+  color: #bd7c8a;
+  opacity: 0;
+}
+
+.ember-preview-heart.show { animation: ember-preview-heart 1s ease-out; }
+
+@keyframes ember-preview-heart {
+  0% { opacity: 0; transform: translateY(10px) scale(0.4); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-24px) scale(1.35); }
+}
+
+.ember-preview-pet-stats {
+  padding: 13px 4px 5px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.ember-preview-pet-stats span {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 8px;
+  color: #6e676e;
+  background: #eee9e5;
+  font-size: 9px;
+  text-align: center;
+  line-height: 18px;
+}
+
+.ember-preview-pet-stats i {
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  top: 0;
+  background: rgba(207, 184, 203, 0.55);
+}
+
+.ember-preview-care-note { margin: 10px 3px 0; color: var(--ember-preview-muted); font-size: 10px; }
+.ember-preview-care-note b { color: #755d70; }
+.ember-preview-side-stack { display: flex; flex-direction: column; gap: 14px; }
+.ember-preview-schedule-card { flex: 1; }
+
+.ember-preview-schedule-item {
+  padding: 13px 0;
+  display: grid;
+  grid-template-columns: 55px 8px 1fr;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--ember-preview-line);
+}
+
+.ember-preview-schedule-item time { color: var(--ember-preview-muted); font-size: 10px; }
+.ember-preview-schedule-item > span { width: 7px; height: 7px; border-radius: 50%; }
+.ember-preview-schedule-item > span.lilac { background: #a989ad; }
+.ember-preview-schedule-item > span.coral { background: #c88b83; }
+.ember-preview-schedule-item div { display: flex; flex-direction: column; gap: 3px; }
+.ember-preview-schedule-item strong { font-size: 12px; }
+.ember-preview-schedule-item small { color: var(--ember-preview-muted); font-size: 9px; }
+
+.ember-preview-health-glance {
+  width: 100%;
+  min-height: 91px;
+  padding: 15px 17px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border-radius: 24px;
+  text-align: left;
+}
+
+.ember-preview-health-orb {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
-  margin-bottom: 28px;
-  border: 1px solid var(--ember-line);
-  border-radius: 15px;
-  color: #a4512e;
-  background: rgba(255, 255, 255, 0.5);
-  font-size: 1.15rem;
+  border-radius: 16px;
+  color: #9d6374;
+  background: #f0dfe1;
+  font-size: 22px;
 }
 
-.ember-room-card--chat {
-  color: #fff8ef;
-  border-color: transparent;
-  background: linear-gradient(150deg, #ad5a37, #653e31);
+.ember-preview-health-glance > span:nth-child(2) { display: flex; flex-direction: column; gap: 2px; }
+.ember-preview-health-glance small { color: #9a7180; font-size: 9px; }
+.ember-preview-health-glance strong { font-size: 12px; }
+.ember-preview-health-glance em { color: var(--ember-preview-muted); font-size: 9px; font-style: normal; }
+.ember-preview-health-glance b { margin-left: auto; color: #9b8a94; font-size: 22px; }
+
+.ember-preview-rooms-page { width: min(820px, 100%); margin: 0 auto; }
+.ember-preview-rooms-intro { padding: 24px 8px 22px; }
+.ember-preview-rooms-intro h1 { margin: 8px 0; font: 500 31px/1.35 Georgia, "Songti SC", serif; }
+.ember-preview-rooms-intro p { margin: 0; color: var(--ember-preview-muted); font-size: 12px; }
+.ember-preview-room-gallery { display: flex; flex-direction: column; gap: 18px; }
+
+.ember-preview-room-card {
+  width: 100%;
+  aspect-ratio: 2.3 / 1;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  border-radius: 28px;
+  background: #f4ece3;
+  box-shadow: 0 14px 32px rgba(68, 53, 63, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
 }
 
-.ember-room-card--chat .ember-room-card__eyebrow,
-.ember-room-card--chat p {
-  color: rgba(255, 248, 239, 0.74);
+.ember-preview-room-card:hover { transform: translateY(-3px); box-shadow: 0 18px 38px rgba(68, 53, 63, 0.12); }
+.ember-preview-room-card img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+.ember-preview-room-number {
+  position: absolute;
+  left: 5.6%;
+  top: 11%;
+  color: rgba(80, 63, 79, 0.7);
+  font: 500 clamp(12px, 1.8vw, 17px)/1 Georgia, "Songti SC", serif;
 }
 
-.ember-room-card--chat .ember-room-card__icon {
-  border-color: rgba(255, 255, 255, 0.18);
-  color: #fff8ef;
-  background: rgba(255, 255, 255, 0.1);
+.ember-preview-room-title {
+  max-width: 41%;
+  position: absolute;
+  left: 5.6%;
+  top: 27%;
+  color: #554358;
+  font: 500 clamp(31px, 6vw, 54px)/1.05 Georgia, "Songti SC", serif;
+  letter-spacing: -0.045em;
 }
 
-.ember-room-card--chat button {
-  color: #4c352b;
-  background: #fff8ef;
-}
-
-.ember-room-card h3 {
-  margin: 12px 0 10px;
-  font-family: ui-serif, "Songti SC", "STSong", serif;
-  font-size: 2rem;
-  font-weight: 500;
-}
-
-.ember-room-card p {
-  margin: 0;
-  color: var(--ember-muted);
-  line-height: 1.7;
-}
-
-.ember-room-card button,
-.ember-room-card__pending {
-  margin-top: auto;
-}
-
-.ember-room-card__pending {
-  color: var(--ember-muted);
-  font-size: 0.8rem;
-}
-
-.ember-living-room__lower-grid {
-  margin-top: 16px;
+.ember-preview-room-arrow {
+  width: clamp(42px, 6.8vw, 58px);
+  height: clamp(42px, 6.8vw, 58px);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  place-items: center;
+  position: absolute;
+  right: 4.5%;
+  top: 10%;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  color: #604b64;
+  background: rgba(255, 252, 248, 0.66);
+  box-shadow: 0 7px 18px rgba(77, 60, 69, 0.08);
+  backdrop-filter: blur(9px);
+  font-size: clamp(22px, 3.8vw, 34px);
 }
 
-.ember-summary-card {
-  min-height: 150px;
-  padding: 24px 26px;
-  border-radius: 22px;
+.ember-preview-room-note {
+  position: absolute;
+  left: 5.6%;
+  top: 67%;
+  color: rgba(72, 61, 70, 0.64);
+  font-size: clamp(9px, 1.4vw, 13px);
 }
 
-.ember-summary-card h2 {
-  font-size: 1.32rem;
+.ember-preview-bottom-nav {
+  width: min(570px, calc(100% - 30px));
+  height: 76px;
+  padding: 7px 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  position: fixed;
+  z-index: 30;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 27px;
+  background: rgba(250, 247, 245, 0.9);
+  box-shadow: 0 15px 40px rgba(63, 49, 59, 0.2);
+  backdrop-filter: blur(24px);
 }
 
-.ember-summary-card p {
-  margin: 10px 0 0;
-  color: var(--ember-muted);
-  line-height: 1.6;
+.ember-preview-bottom-nav button {
+  height: 58px;
+  border: 0;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: #90868e;
+  background: transparent;
+}
+
+.ember-preview-bottom-nav button > span { font-size: 20px; line-height: 1; }
+.ember-preview-bottom-nav button small { font-size: 9px; }
+.ember-preview-bottom-nav button.active:not(.center-chat) { color: #6b5168; background: rgba(222, 207, 220, 0.58); }
+
+.ember-preview-bottom-nav .center-chat {
+  height: 94px;
+  align-self: end;
+  transform: translateY(-13px);
+  gap: 3px;
+  overflow: visible;
+  color: #775e73;
+}
+
+.ember-preview-chat-circle {
+  width: 70px;
+  height: 70px;
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  border: 5px solid rgba(250, 247, 245, 0.97);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #92748e, #614c60);
+  box-shadow: 0 12px 28px rgba(83, 59, 79, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.ember-preview-chat-circle > i { position: absolute; display: block; background: rgba(255, 255, 255, 0.95); }
+.ember-preview-chat-circle .back-bubble { width: 24px; height: 18px; left: 14px; top: 14px; border-radius: 9px 9px 7px 9px; opacity: 0.58; }
+.ember-preview-chat-circle .front-bubble { width: 30px; height: 23px; right: 11px; bottom: 12px; border-radius: 11px 11px 10px 8px; }
+.ember-preview-chat-circle .back-bubble::after,
+.ember-preview-chat-circle .front-bubble::after { content: ""; width: 7px; height: 7px; position: absolute; bottom: -2px; background: inherit; }
+.ember-preview-chat-circle .back-bubble::after { left: 2px; transform: rotate(26deg); }
+.ember-preview-chat-circle .front-bubble::after { right: 2px; transform: rotate(-25deg); }
+.ember-preview-chat-circle b { width: 3px; height: 3px; position: absolute; top: 10px; border-radius: 50%; background: #735a70; }
+.ember-preview-chat-circle b:first-child { left: 10px; }
+.ember-preview-chat-circle b:last-child { right: 10px; }
+
+.ember-preview-toast {
+  max-width: calc(100% - 40px);
+  padding: 12px 18px;
+  position: fixed;
+  z-index: 100;
+  left: 50%;
+  bottom: 118px;
+  transform: translateX(-50%);
+  border-radius: 16px;
+  color: white;
+  background: rgba(55, 46, 54, 0.92);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  text-align: center;
+  animation: ember-preview-toast 0.25s ease-out;
+}
+
+@keyframes ember-preview-toast {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+}
+
+.ember-chat-host {
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: #171513;
+}
+
+.ember-chat-host > .app-shell {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 100%;
 }
 
 .ember-chat-host__home-button {
@@ -362,88 +676,46 @@
   cursor: pointer;
 }
 
-.ember-chat-host {
-  width: 100%;
-  height: 100dvh;
-  min-height: 0;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(214, 109, 59, 0.14), transparent 28rem),
-    #171513;
+@media (max-width: 720px) {
+  .ember-living-room { padding: 0; }
+  .ember-preview-ambient { display: none; }
+  .ember-preview-frame { min-height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
+  .ember-preview-topbar { height: 80px; padding: 17px 18px; }
+  .ember-preview-brand-mark,
+  .ember-preview-avatar,
+  .ember-preview-icon-button { width: 41px; height: 41px; border-radius: 14px; }
+  .ember-preview-topbar-title strong { font-size: 20px; }
+  .ember-preview-page-area { padding: 18px 15px 110px; }
+  .ember-preview-hero-grid,
+  .ember-preview-lower-grid { grid-template-columns: 1fr; }
+  .ember-preview-weather-card { min-height: 215px; }
+  .ember-preview-together-card { padding: 23px; }
+  .ember-preview-together-card > strong { margin: 20px 0 17px; }
+  .ember-preview-note { padding: 18px; gap: 16px; }
+  .ember-preview-ember-mini { width: 55px; height: 55px; border-radius: 20px; }
+  .ember-preview-eye { top: 26px; }
+  .ember-preview-note p { font-size: 14px; }
+  .ember-preview-pet-stage { gap: 18px; }
+  .ember-preview-tuantuan { width: 137px; height: 133px; }
+  .ember-preview-bottom-nav { width: calc(100% - 20px); bottom: 10px; }
+  .ember-preview-bottom-nav button > span { font-size: 18px; }
+  .ember-preview-rooms-intro h1 { font-size: 26px; }
+  .ember-preview-room-gallery { gap: 13px; }
+  .ember-preview-room-card { border-radius: 21px; }
+  .ember-preview-room-number { left: 5%; top: 10%; font-size: 10px; }
+  .ember-preview-room-title { left: 5%; top: 27%; max-width: 42%; font-size: clamp(24px, 8vw, 34px); }
+  .ember-preview-room-arrow { width: 39px; height: 39px; right: 4%; top: 9%; font-size: 23px; }
+  .ember-preview-room-note { left: 5%; top: 69%; max-width: 42%; font-size: clamp(7px, 2.35vw, 10px); }
 }
 
-.ember-chat-host > .app-shell {
-  width: 100%;
-  max-width: none;
-  height: 100%;
-  min-height: 100%;
+@media (max-width: 390px) {
+  .ember-preview-pet-stage { flex-direction: column; gap: 1px; padding: 16px; }
+  .ember-preview-pet-copy { text-align: center; }
+  .ember-preview-weather-card { min-height: 195px; }
 }
 
-.ember-chat-host__home-button > span:first-child {
-  font-size: 1rem;
-}
-
-@media (max-width: 760px) {
-  .ember-living-room__header,
-  .ember-living-room__content {
-    width: min(100% - 28px, 1120px);
-  }
-
-  .ember-living-room__header {
-    min-height: 72px;
-  }
-
-  .ember-living-room__content {
-    padding: 44px 0 112px;
-  }
-
-  .ember-living-room__intro h1 {
-    font-size: clamp(2.65rem, 14vw, 4.6rem);
-  }
-
-  .ember-note {
-    grid-template-columns: auto 1fr;
-  }
-
-  .ember-note button {
-    grid-column: 1 / -1;
-    width: 100%;
-  }
-
-  .ember-room-section {
-    margin-top: 52px;
-  }
-
-  .ember-room-section__heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .ember-room-grid,
-  .ember-living-room__lower-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .ember-room-card {
-    min-height: 210px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .ember-living-room {
-    --ember-ink: #f5eee7;
-    --ember-muted: #b8ada5;
-    --ember-line: rgba(255, 239, 224, 0.11);
-    --ember-paper: rgba(40, 35, 32, 0.82);
-    background:
-      radial-gradient(circle at 8% 4%, rgba(173, 82, 48, 0.28), transparent 28rem),
-      radial-gradient(circle at 92% 32%, rgba(89, 117, 81, 0.3), transparent 30rem),
-      linear-gradient(145deg, #201c1a 0%, #171513 100%);
-  }
-
-  .ember-living-room__status,
-  .ember-note {
-    background: rgba(48, 41, 37, 0.76);
-  }
+@media (prefers-reduced-motion: reduce) {
+  .ember-living-room *,
+  .ember-living-room *::before,
+  .ember-living-room *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }

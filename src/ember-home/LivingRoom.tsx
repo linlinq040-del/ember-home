@@ -1,108 +1,194 @@
+import { useEffect, useState } from 'react';
 import { getLivingRoomGreeting } from './livingRoomGreeting';
 
 type LivingRoomProps = {
   onOpenChat: () => void;
 };
 
-const roomCards = [
-  {
-    id: 'chat',
-    icon: '✦',
-    eyebrow: '现在',
-    title: '和 Ember 说说话',
-    detail: '不需要想好主题，进来就行。',
-    action: '打开聊天室'
-  },
-  {
-    id: 'music',
-    icon: '♪',
-    eyebrow: '接下来',
-    title: '音乐角',
-    detail: '一起听歌、看同步歌词。'
-  },
-  {
-    id: 'study',
-    icon: '⌁',
-    eyebrow: '接下来',
-    title: '书房',
-    detail: '继续阅读和共同留下便签。'
-  }
+type LivingRoomPage = 'home' | 'rooms';
+
+const navItems = [
+  { id: 'home', icon: '⌂', label: '客厅' },
+  { id: 'calendar', icon: '▢', label: '日历' },
+  { id: 'chat', icon: '', label: '聊天室' },
+  { id: 'health', icon: '♡', label: '状态' },
+  { id: 'rooms', icon: '••', label: '房间' }
+] as const;
+
+const rooms = [
+  { id: 'study', number: '01', title: '书房', note: '阅读与共同批注将在这里继续', image: '/assets/room-study-watercolor.png' },
+  { id: 'cinema', number: '02', title: '观影厅', note: '正在布置', image: '/assets/room-cinema-watercolor.png' },
+  { id: 'game', number: '03', title: '游戏厅', note: '正在布置', image: '/assets/room-game-watercolor.png' },
+  { id: 'diary', number: '04', title: '日记室', note: '正在布置', image: '/assets/room-diary-watercolor.png' },
+  { id: 'life', number: '05', title: '生活记录', note: '本地数据接入后开放', image: '/assets/room-life-watercolor.png' },
+  { id: 'studio', number: '06', title: '创作工作室', note: '正在布置', image: '/assets/room-studio-watercolor.png' }
 ] as const;
 
 export function LivingRoom({ onOpenChat }: LivingRoomProps) {
+  const [page, setPage] = useState<LivingRoomPage>('home');
+  const [toast, setToast] = useState('');
+  const [petMood, setPetMood] = useState('今天心情很好');
+  const [petHearts, setPetHearts] = useState(0);
   const greeting = getLivingRoomGreeting(new Date().getHours());
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(''), 2300);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  const showComingSoon = (label: string) => setToast(`${label}正在按开发计划布置`);
+
+  const openPage = (nextPage: LivingRoomPage) => {
+    setPage(nextPage);
+    window.requestAnimationFrame(() => {
+      document.querySelector('.ember-living-room')?.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
+  const handleNavigation = (id: (typeof navItems)[number]['id']) => {
+    if (id === 'chat') {
+      onOpenChat();
+      return;
+    }
+    if (id === 'home' || id === 'rooms') {
+      openPage(id);
+      return;
+    }
+    showComingSoon(id === 'calendar' ? '共同日历' : '身体状态');
+  };
+
+  const petTuanTuan = () => {
+    setPetHearts((value) => value + 1);
+    setPetMood(petHearts > 1 ? '被摸得晕乎乎的' : '舒服得眯起眼睛');
+  };
 
   return (
     <main className="ember-living-room">
-      <div className="ember-living-room__glow ember-living-room__glow--top" aria-hidden="true" />
-      <div className="ember-living-room__glow ember-living-room__glow--bottom" aria-hidden="true" />
+      <div className="ember-preview-ambient ember-preview-ambient--one" aria-hidden="true" />
+      <div className="ember-preview-ambient ember-preview-ambient--two" aria-hidden="true" />
 
-      <header className="ember-living-room__header">
-        <a className="ember-home-brand" href="#living-room" aria-label="Ember Home 客厅">
-          <span className="ember-home-brand__mark" aria-hidden="true"><span /></span>
-          <span>
-            <strong>Ember Home</strong>
-            <small>我们的家</small>
-          </span>
-        </a>
-        <span className="ember-living-room__status"><i /> 家里一切安静</span>
-      </header>
-
-      <section className="ember-living-room__content" aria-labelledby="living-room-title">
-        <div className="ember-living-room__intro">
-          <p className="ember-living-room__eyebrow">EMBER HOME · 客厅</p>
-          <h1 id="living-room-title">{greeting}，琳琳。</h1>
-          <p>欢迎回家。这里只有你、Ember，和真正值得留下的事。</p>
-        </div>
-
-        <article className="ember-note">
-          <div className="ember-note__avatar" aria-hidden="true">E</div>
-          <div className="ember-note__body">
-            <span>Ember 的留言</span>
-            <p>我在客厅。你进来时，不用先想好要说什么。</p>
+      <section className="ember-preview-frame">
+        <header className={`ember-preview-topbar ${page === 'home' ? 'is-home' : ''}`}>
+          {page === 'home' ? (
+            <div className="ember-preview-brand-mark" aria-hidden="true">E</div>
+          ) : (
+            <button className="ember-preview-icon-button" type="button" onClick={() => openPage('home')} aria-label="返回客厅">‹</button>
+          )}
+          <div className="ember-preview-topbar-title">
+            {page === 'home' ? (
+              <>
+                <span>EMBER HOME · 我们的家</span>
+                <strong>{greeting}，琳琳</strong>
+              </>
+            ) : (
+              <strong>家里的房间</strong>
+            )}
           </div>
-          <button type="button" onClick={onOpenChat}>去找 Ember <span aria-hidden="true">→</span></button>
-        </article>
+          <button className="ember-preview-icon-button ember-preview-settings" type="button" onClick={() => showComingSoon('Ember Home 系统设置')} aria-label="打开 Ember Home 系统设置">⚙</button>
+          <button className="ember-preview-avatar" type="button" onClick={() => setToast('头像设置会继续保存在本机')} aria-label="自定义头像"><span>兔</span><i>＋</i></button>
+        </header>
 
-        <section className="ember-room-section" aria-labelledby="room-section-title">
-          <div className="ember-room-section__heading">
-            <div>
-              <p className="ember-living-room__eyebrow">房间</p>
-              <h2 id="room-section-title">我们的空间</h2>
+        <div className="ember-preview-page-area">
+          {page === 'home' ? (
+            <div className="ember-preview-home-page">
+              <section className="ember-preview-hero-grid">
+                <button className="ember-preview-weather-card" type="button" onClick={() => showComingSoon('天气服务')}>
+                  <img src="/assets/weather-board-clean.png" alt="18度，多云转晴的今日天气卡片" />
+                  <span className="ember-preview-weather-sync"><i /> 天气服务 · 等待接入</span>
+                </button>
+
+                <article className="ember-preview-together-card">
+                  <span className="ember-preview-eyebrow">OUR DAYS</span>
+                  <strong>在一起的第 <em>486</em> 天</strong>
+                  <div className="ember-preview-anniversary-row"><span>我们的纪念</span><b>一直在继续</b></div>
+                </article>
+              </section>
+
+              <section className="ember-preview-note">
+                <button className="ember-preview-ember-mini" type="button" onClick={onOpenChat} aria-label="去找 Ember">
+                  <span className="ember-preview-ear ember-preview-ear--left" />
+                  <span className="ember-preview-ear ember-preview-ear--right" />
+                  <span className="ember-preview-eye ember-preview-eye--left" />
+                  <span className="ember-preview-eye ember-preview-eye--right" />
+                </button>
+                <div>
+                  <span className="ember-preview-eyebrow">EMBER 留给你的话</span>
+                  <p>“我在家。你想说话的时候，直接进来找我。”</p>
+                  <button type="button" onClick={onOpenChat}>回他一句 <span>→</span></button>
+                </div>
+              </section>
+
+              <section className="ember-preview-lower-grid">
+                <article className="ember-preview-pet-card">
+                  <div className="ember-preview-section-heading">
+                    <div><span className="ember-preview-eyebrow">OUR LITTLE ONE</span><h2>团团今天怎么样</h2></div>
+                    <button type="button" onClick={() => showComingSoon('宠物房')}>宠物房</button>
+                  </div>
+                  <button className="ember-preview-pet-stage" type="button" onClick={petTuanTuan}>
+                    <span className={`ember-preview-heart ${petHearts ? 'show' : ''}`} key={petHearts}>♥</span>
+                    <img className="ember-preview-tuantuan" src="/assets/tuantuan-clean.png" alt="胖乎乎的像素小鸡团团" />
+                    <span className="ember-preview-pet-copy"><strong>{petMood}</strong><small>点一点摸摸团团</small></span>
+                  </button>
+                  <div className="ember-preview-pet-stats">
+                    <span><i style={{ width: '78%' }} />饱食 78</span>
+                    <span><i style={{ width: '64%' }} />精力 64</span>
+                    <span><i style={{ width: '92%' }} />心情 92</span>
+                  </div>
+                  <p className="ember-preview-care-note"><b>Ember</b> 正和你一起照顾团团</p>
+                </article>
+
+                <div className="ember-preview-side-stack">
+                  <article className="ember-preview-schedule-card">
+                    <div className="ember-preview-section-heading">
+                      <div><span className="ember-preview-eyebrow">TODAY</span><h2>今天的安排</h2></div>
+                      <button type="button" onClick={() => showComingSoon('共同日历')}>日历</button>
+                    </div>
+                    <div className="ember-preview-schedule-item"><time>现在</time><span className="lilac" /><div><strong>继续完善 Ember Home</strong><small>客厅 · 本地优先</small></div></div>
+                    <div className="ember-preview-schedule-item"><time>接下来</time><span className="coral" /><div><strong>把音乐角和书房搬进来</strong><small>按开发计划逐步开放</small></div></div>
+                  </article>
+                  <button className="ember-preview-health-glance" type="button" onClick={() => showComingSoon('身体状态')}>
+                    <span className="ember-preview-health-orb">♡</span>
+                    <span><small>身体状态</small><strong>健康数据尚未接入</strong><em>原始数据仍留在你的设备上</em></span>
+                    <b>›</b>
+                  </button>
+                </div>
+              </section>
             </div>
-            <span>从聊天开始，其他房间会慢慢住进来</span>
-          </div>
-
-          <div className="ember-room-grid">
-            {roomCards.map((room) => (
-              <article className={`ember-room-card ember-room-card--${room.id}`} key={room.id}>
-                <span className="ember-room-card__icon" aria-hidden="true">{room.icon}</span>
-                <span className="ember-room-card__eyebrow">{room.eyebrow}</span>
-                <h3>{room.title}</h3>
-                <p>{room.detail}</p>
-                {'action' in room ? (
-                  <button type="button" onClick={onOpenChat}>{room.action}</button>
-                ) : (
-                  <span className="ember-room-card__pending">正在布置</span>
-                )}
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="ember-living-room__lower-grid" aria-label="客厅动态">
-          <article className="ember-summary-card">
-            <span>继续</span>
-            <h2>先从一段对话开始</h2>
-            <p>之后想继续的阅读、音乐和小计划，会安静地回到这里。</p>
-          </article>
-          <article className="ember-summary-card">
-            <span>今天</span>
-            <h2>今天没有需要催你的事</h2>
-            <p>共同日历接入后，这里也只放真正重要的提醒。</p>
-          </article>
-        </section>
+          ) : (
+            <div className="ember-preview-rooms-page">
+              <div className="ember-preview-rooms-intro"><span className="ember-preview-eyebrow">EMBER HOME</span><h1>今天想去哪儿？</h1><p>房间会按开发计划逐步接入；现在可以先看看未来的家。</p></div>
+              <div className="ember-preview-room-gallery">
+                {rooms.map((room) => (
+                  <button className="ember-preview-room-card" type="button" key={room.id} onClick={() => showComingSoon(room.title)} aria-label={`查看${room.title}`}>
+                    <img src={room.image} alt={`${room.title}水彩插画`} />
+                    <span className="ember-preview-room-number">{room.number}</span>
+                    <strong className="ember-preview-room-title">{room.title}</strong>
+                    <span className="ember-preview-room-arrow" aria-hidden="true">→</span>
+                    <span className="ember-preview-room-note">{room.note}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </section>
+
+      <nav className="ember-preview-bottom-nav" aria-label="Ember Home 主要导航">
+        {navItems.map((item) => {
+          const active = (page === 'home' && item.id === 'home') || (page === 'rooms' && item.id === 'rooms');
+          return (
+            <button className={`${active ? 'active' : ''} ${item.id === 'chat' ? 'center-chat' : ''}`} type="button" onClick={() => handleNavigation(item.id)} key={item.id} aria-label={item.label}>
+              {item.id === 'chat' ? (
+                <span className="ember-preview-chat-circle" aria-hidden="true"><i className="back-bubble" /><i className="front-bubble"><b /><b /></i></span>
+              ) : <span>{item.icon}</span>}
+              <small>{item.label}</small>
+            </button>
+          );
+        })}
+      </nav>
+
+      {toast && <div className="ember-preview-toast" role="status">{toast}</div>}
     </main>
   );
 }
