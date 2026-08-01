@@ -2,7 +2,7 @@ const SENTENCE_END = /[。！？!?；;]/;
 const CLOSING_MARK = /[”’」』）)]/;
 const MARKDOWN_BLOCK = /^(?:\s*```|\s*~~~|\s{0,3}#{1,6}\s|\s*>\s|\s*[-+*]\s|\s*\d+[.)]\s|\s*\|)/m;
 
-function sentenceUnits(content: string) {
+function sentenceUnits(content: string, includeIncompleteTail: boolean) {
   const units: string[] = [];
   let current = '';
 
@@ -29,7 +29,7 @@ function sentenceUnits(content: string) {
   }
 
   const tail = current.trim();
-  if (tail) units.push(tail);
+  if (includeIncompleteTail && tail) units.push(tail);
   return units;
 }
 
@@ -38,29 +38,17 @@ function sentenceUnits(content: string) {
  * The persisted message remains intact so copy, speech, memory and future
  * model context always see the original reply.
  */
-export function splitAssistantSentenceBubbles(content: string): string[] {
+export function canRenderAssistantSentenceBubbles(content: string) {
+  return Boolean(content.trim()) && !MARKDOWN_BLOCK.test(content);
+}
+
+export function splitAssistantSentenceBubbles(
+  content: string,
+  options: { includeIncompleteTail?: boolean } = {}
+): string[] {
   const normalized = content.trim();
-  if (!normalized || MARKDOWN_BLOCK.test(normalized)) return [normalized];
+  if (!normalized) return [];
+  if (!canRenderAssistantSentenceBubbles(normalized)) return [normalized];
 
-  const units = sentenceUnits(normalized);
-  if (units.length < 2) return [normalized];
-
-  const bubbles: string[] = [];
-  let current = '';
-
-  units.forEach((unit) => {
-    const needsSpace = /[\x00-\x7F]$/.test(current) && /^[A-Za-z0-9(]/.test(unit);
-    const candidate = current ? `${current}${needsSpace ? ' ' : ''}${unit}` : unit;
-    if (current && current.length >= 18 && candidate.length > 58) {
-      bubbles.push(current);
-      current = unit;
-    } else {
-      current = candidate;
-    }
-  });
-  if (current) bubbles.push(current);
-
-  if (bubbles.length < 2) return [normalized];
-  if (bubbles.length <= 6) return bubbles;
-  return [...bubbles.slice(0, 5), bubbles.slice(5).join('')];
+  return sentenceUnits(normalized, options.includeIncompleteTail ?? true);
 }

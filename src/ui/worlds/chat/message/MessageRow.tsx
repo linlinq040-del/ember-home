@@ -11,7 +11,7 @@ import { runSelectionAction, runSuccessAction, selectionHaptic } from '../../../
 import { ChatAttachmentStrip } from '../ChatAttachmentStrip';
 import type { ChatEditingState } from '../context/ChatUiState';
 import { resolveCodeCardActionCopy, resolveMessageRowRoleClass } from '../messageRowMeta';
-import { splitAssistantSentenceBubbles } from './assistantSentenceBubbles';
+import { canRenderAssistantSentenceBubbles, splitAssistantSentenceBubbles } from './assistantSentenceBubbles';
 import { useI18n } from '../../../../i18n';
 import { buildMessageCycleAttrs, buildUserBubbleCycleAttrs } from '../userBubbleCycles';
 import { MessageActions, type MessageTaskReceiptAction } from './MessageActions';
@@ -317,34 +317,17 @@ function MessageRowComponent({
     isAssistantReply
     && showChatAvatars
     && !state.editing
-    && !isStreamingLike
     && !message.attachments?.length
-    && !resolvedCardReference;
+    && !resolvedCardReference
+    && toolMessages.length === 0
+    && !hasProjectedCodeToolEvent
+    && canRenderAssistantSentenceBubbles(message.content);
   const sentenceBubbleContents = canUseSentenceBubbles
-    ? splitAssistantSentenceBubbles(message.content)
-    : [message.content];
-  const messageBubble = sentenceBubbleContents.length > 1 ? (
-    <div className="bubble-frame assistant sentence-bubble-stack">
-      {sentenceBubbleContents.map((content, index) => (
-        <div className="bubble assistant sentence-bubble" key={`${message.id}:sentence:${index}`}>
-          <MessageContent
-            message={{ ...message, content }}
-            codeCardActionMode={state.codeCardActionMode}
-            isCodeExpanded={state.isCodeExpanded}
-            sandboxToolInvocation={sandboxToolInvocation}
-            hasProjectedCodeToolEvent={hasProjectedCodeToolEvent}
-            hasResolvedToolEvent={toolMessages.length > 0}
-            collapseThinkingProjection={collapseThinkingProjection}
-            showThinking={false}
-            preferInlineCode={false}
-            smoothStreamingText={false}
-            onToggleCodeExpanded={() => actions.toggleCodeExpanded(message.id)}
-            onApplyCustomCss={actions.applyCustomCss}
-          />
-        </div>
-      ))}
-    </div>
-  ) : (
+    ? splitAssistantSentenceBubbles(message.content, { includeIncompleteTail: !isStreamingLike })
+    : [];
+  const useSentenceConversationLayout = canUseSentenceBubbles
+    && (isStreamingLike || sentenceBubbleContents.length > 1);
+  const messageBubble = (
     <div
       ref={bubbleFrameRef}
       className={`bubble-frame ${message.role === 'assistant' ? 'assistant' : 'user'} ${state.editing ? 'editing' : ''} ${state.lifecycle} ${showStreamingPrelude ? 'streaming-prelude' : ''} ${userActionMenuOpen ? 'action-menu-open' : ''}`}
@@ -453,6 +436,88 @@ function MessageRowComponent({
         <div className="system-inline-note">{message.content}</div>
       ) : isAssistantReply ? (
         <div className={`message-turn assistant ${showChatAvatars ? 'with-avatar' : ''}`}>
+          {useSentenceConversationLayout ? (
+            <div className="assistant-sentence-turn-list">
+              {sentenceBubbleContents.map((content, index) => (
+                <div className="message-turn-body assistant sentence-bubble-turn" key={`${message.id}:sentence:${index}`}>
+                  <div className="message-avatar-slot assistant sentence-bubble-avatar" style={{ width: assistantAvatarPx, minWidth: assistantAvatarPx }}>
+                    <PersonaAvatar
+                      role="assistant"
+                      seed={assistantSigilSeed}
+                      imageUrl={assistantAvatarUrl}
+                      iconId={assistantAvatarIconId}
+                      shape={assistantAvatarShape}
+                      size={assistantAvatarPx}
+                      className="message-avatar"
+                    />
+                  </div>
+                  <div className="message-turn-stack assistant">
+                    {index === 0 && showAssistantChatIdentity ? (
+                      <MessageMeta
+                        message={message}
+                        fallbackAssistantName={fallbackAssistantName}
+                        isThinkingActive={isStreamingLike}
+                        onOpenThinkingSummary={actions.openThinkingSummary}
+                        showDetails={false}
+                        showThinking={showThinking}
+                      />
+                    ) : null}
+                    <div className="bubble-frame assistant sentence-bubble-frame">
+                      <div className="bubble assistant sentence-bubble">
+                        <MessageContent
+                          message={{ ...message, content }}
+                          codeCardActionMode={state.codeCardActionMode}
+                          isCodeExpanded={state.isCodeExpanded}
+                          sandboxToolInvocation={sandboxToolInvocation}
+                          hasProjectedCodeToolEvent={false}
+                          hasResolvedToolEvent={false}
+                          collapseThinkingProjection
+                          showThinking={false}
+                          preferInlineCode={false}
+                          smoothStreamingText={false}
+                          onToggleCodeExpanded={() => actions.toggleCodeExpanded(message.id)}
+                          onApplyCustomCss={actions.applyCustomCss}
+                        />
+                      </div>
+                    </div>
+                    {!isStreamingLike && index === sentenceBubbleContents.length - 1 ? messageActions : null}
+                  </div>
+                </div>
+              ))}
+              {isStreamingLike ? (
+                <div className="message-turn-body assistant sentence-bubble-turn sentence-bubble-pending" key={`${message.id}:typing`}>
+                  <div className="message-avatar-slot assistant sentence-bubble-avatar" style={{ width: assistantAvatarPx, minWidth: assistantAvatarPx }}>
+                    <PersonaAvatar
+                      role="assistant"
+                      seed={assistantSigilSeed}
+                      imageUrl={assistantAvatarUrl}
+                      iconId={assistantAvatarIconId}
+                      shape={assistantAvatarShape}
+                      size={assistantAvatarPx}
+                      className="message-avatar"
+                    />
+                  </div>
+                  <div className="message-turn-stack assistant">
+                    {sentenceBubbleContents.length === 0 && showAssistantChatIdentity ? (
+                      <MessageMeta
+                        message={message}
+                        fallbackAssistantName={fallbackAssistantName}
+                        isThinkingActive
+                        onOpenThinkingSummary={actions.openThinkingSummary}
+                        showDetails={false}
+                        showThinking={showThinking}
+                      />
+                    ) : null}
+                    <div className="bubble-frame assistant sentence-bubble-frame">
+                      <div className="bubble assistant sentence-bubble sentence-bubble-typing" aria-label={t('chat.messageRow.generatingAria')}>
+                        <span /><span /><span />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : (
           <div className="message-turn-body assistant">
             {showChatAvatars ? (
               <div
@@ -515,6 +580,7 @@ function MessageRowComponent({
               {messageActions}
             </div>
           </div>
+          )}
         </div>
       ) : (
         <div className={`message-turn user ${showChatAvatars ? 'with-avatar' : ''}`}>

@@ -3,11 +3,41 @@
 .bubble-frame.user.editing { width: min(100%, 560px); max-width: min(100%, 560px); }
 .bubble-frame.user.action-menu-open { z-index: 3; }
 .bubble-frame.assistant { align-self: flex-start; width: 100%; max-width: 100%; align-items: flex-start; }
-.bubble-frame.assistant.sentence-bubble-stack { gap: 8px; }
-.bubble-frame.assistant.sentence-bubble-stack .bubble.assistant {
+.assistant-sentence-turn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.message-turn-body.assistant.sentence-bubble-turn {
+  align-items: flex-start;
+  animation: latestMessagePop 180ms var(--ease-out) both;
+  transform-origin: 0 100%;
+}
+.message-avatar-slot.assistant.sentence-bubble-avatar { padding-top: 0; }
+.bubble-frame.assistant.sentence-bubble-frame { width: auto; }
+.bubble.assistant.sentence-bubble {
   width: fit-content;
   max-width: min(100%, 44rem);
 }
+.bubble.assistant.sentence-bubble-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 48px;
+  min-height: 36px;
+  padding: 10px 14px;
+}
+.bubble.assistant.sentence-bubble-typing > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--text-muted);
+  opacity: 0.24;
+  animation: softPulse 1.1s ease-in-out infinite;
+}
+.bubble.assistant.sentence-bubble-typing > span:nth-child(2) { animation-delay: 120ms; }
+.bubble.assistant.sentence-bubble-typing > span:nth-child(3) { animation-delay: 240ms; }
 .bubble-frame.assistant.streaming-stage {
   position: relative;
   min-height: clamp(88px, 16vh, 148px);
