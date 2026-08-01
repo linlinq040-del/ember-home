@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAndroidApkUpdateRuntime } from '../../app/android/useAndroidApkUpdateRuntime';
 import { useAutomaticConversationSummaryMemory } from '../../app/chat/useAutomaticConversationSummaryMemory';
 import { useDesktopWorkspaceAutoSync } from '../../app/desktop/useDesktopWorkspaceAutoSync';
-import { usePersistentStoreLifecycle } from '../../app/bootstrap/usePersistentStoreLifecycle';
+import type { usePersistentStoreLifecycle } from '../../app/bootstrap/usePersistentStoreLifecycle';
 import { useAppTriggerRuntime, type AppTriggerChatRuntimePort } from '../../app/shell/useAppTriggerRuntime';
 import type { AppLanguage } from '../../i18n';
 import { useDeveloperModeRuntime } from '../useDeveloperModeRuntime';
@@ -34,16 +34,17 @@ type UseAppRuntimeArgs = {
     backfillOwnershipFromConversations: (conversations: Conversation[]) => void;
   };
   screenshotDebugOverlayEnabled: boolean;
+  persistentStoreLifecycle: ReturnType<typeof usePersistentStoreLifecycle>;
 };
 
 export function useAppRuntime({
   appLanguage,
   chatRuntime,
   collectionOwnershipBackfill,
-  screenshotDebugOverlayEnabled
+  screenshotDebugOverlayEnabled,
+  persistentStoreLifecycle
 }: UseAppRuntimeArgs) {
   useDeveloperModeRuntime();
-  const persistentStoreLifecycle = usePersistentStoreLifecycle();
   const backgroundRuntimeReady = (
     persistentStoreLifecycle.startupThemeReady
     && persistentStoreLifecycle.startupStoresReady

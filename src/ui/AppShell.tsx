@@ -9,6 +9,7 @@ import { RequestDebugOverlay } from './RequestDebugOverlay';
 import { closeDebugSurfaces } from './developer/debugSurfaceState';
 import { useSpaceStore } from '../stores/spaceStore';
 import { shouldShowWorldSwitchVeil } from '../app/shell/worldSwitchVeilVisibility';
+import type { usePersistentStoreLifecycle } from '../app/bootstrap/usePersistentStoreLifecycle';
 
 const AssetGovernanceDebugLayer = lazy(() =>
   import('./AssetGovernanceDebugLayer').then((module) => ({ default: module.AssetGovernanceDebugLayer }))
@@ -16,9 +17,10 @@ const AssetGovernanceDebugLayer = lazy(() =>
 
 type AppShellProps = {
   onReturnHome?: () => void;
+  persistentStoreLifecycle: ReturnType<typeof usePersistentStoreLifecycle>;
 };
 
-export function AppShell({ onReturnHome }: AppShellProps = {}) {
+export function AppShell({ onReturnHome, persistentStoreLifecycle }: AppShellProps) {
   const controller = useAppShellController();
   const appLanguage = useSpaceStore((state) => state.appLanguage);
   const screenshotDebugOverlayEnabled = useSpaceStore((state) => state.screenshotDebugOverlayEnabled);
@@ -26,7 +28,8 @@ export function AppShell({ onReturnHome }: AppShellProps = {}) {
     appLanguage,
     chatRuntime: controller.chatRuntimePort,
     collectionOwnershipBackfill: controller.collectionOwnershipBackfillPort,
-    screenshotDebugOverlayEnabled
+    screenshotDebugOverlayEnabled,
+    persistentStoreLifecycle
   });
   const appShellView = useAppShellViewController({
     ...controller,
