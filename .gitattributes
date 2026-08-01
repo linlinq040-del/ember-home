@@ -4,3 +4,4 @@ dist/** export-ignore
 server-dist/** export-ignore
 tmp/** export-ignore
 tsconfig.tsbuildinfo export-ignore
+docs/history/Ember_Home_初始开发计划_健康音乐与自然语言导航_LRCLIB版.md text eol=lf
